@@ -1,0 +1,134 @@
+import React, { ChangeEvent, useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { Layout, Form, Select, Button, Input } from "antd";
+import styled from "styled-components";
+
+const { Header, Content } = Layout;
+const { Item: FormItem } = Form;
+const { Option } = Select;
+
+interface IFormData {
+  email: string;
+  password: string;
+  passwordConfirm?: string;
+}
+
+interface IProps {
+  handleSubmit: (IFormData: IFormData) => void;
+  isSignIn: boolean;
+}
+const Sign = ({ handleSubmit, isSignIn }: IProps) => {
+  const [password, setPassword] = useState("");
+  const [passCheck, setPassCheck] = useState(true);
+
+  const onFinish = (values: IFormData) => {
+    handleSubmit(values);
+  };
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.currentTarget.value);
+  };
+  const handlePasswordCheck = (event: ChangeEvent<HTMLInputElement>) => {
+    const passwordConfirm = event.currentTarget.value;
+    if (password === passwordConfirm) setPassCheck(true);
+    else setPassCheck(false);
+  };
+
+  return (
+    <React.Fragment>
+      <Head children={""}>
+        <title>sign in</title>
+      </Head>
+
+      <Content style={{ padding: 48 }}>
+        <p component="h1" variant="h5">
+          {isSignIn ? "Sign In" : "Sign Up"}
+        </p>
+        <Form
+          layout="horizontal"
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 12 }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <FormItem
+            label="이메일"
+            name="email"
+            rules={[
+              { required: true, message: "이메일을 입력해주세요." },
+              {
+                type: "email",
+                message: "이메일 형식으로 입력해주세요.",
+              },
+            ]}
+          >
+            <Input size="large" style={{ width: "100%" }} />
+          </FormItem>
+
+          <FormItem
+            label="비밀번호"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "최소 6자 이상 입력해주세요.",
+                min: 6,
+              },
+            ]}
+          >
+            <Input.Password
+              size="large"
+              style={{ width: "100%" }}
+              onChange={handlePasswordChange}
+            />
+          </FormItem>
+          {!isSignIn && (
+            <>
+              <FormItem
+                label="비밀번호 확인"
+                name="passwordConfirm"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input.Password
+                  size="large"
+                  style={{ width: "100%" }}
+                  onChange={handlePasswordCheck}
+                />
+              </FormItem>
+              {!passCheck && (
+                <FlagMessage>비밀번호가 일치하지 않습니다.</FlagMessage>
+              )}
+            </>
+          )}
+
+          <FormItem
+            style={{ marginTop: 48 }}
+            wrapperCol={{ span: 14, offset: 5 }}
+          >
+            <Button
+              size="large"
+              type="primary"
+              htmlType="submit"
+              style={{ width: "100%" }}
+            >
+              {isSignIn ? "로그인" : "회원가입"}
+            </Button>
+          </FormItem>
+        </Form>
+      </Content>
+    </React.Fragment>
+  );
+};
+const FlagMessage = styled.p`
+  color: tomato;
+`;
+export default Sign;
