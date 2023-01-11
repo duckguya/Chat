@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Layout, Form, Select, Button } from "antd";
@@ -13,6 +13,12 @@ const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
 const { Option } = Select;
 
+const USERS = [
+  { userId: "use1@gmail.com", password: "123123" },
+  { userId: "use2@gmail.com", password: "123123" },
+  { userId: "use3@gmail.com", password: "123123" },
+];
+
 interface IFormData {
   email: string;
   password: string;
@@ -24,16 +30,29 @@ function Home() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (values: IFormData) => {
-    console.log("values", values);
+  useEffect(() => {
+    store.remove("user");
+    store.set("user", USERS);
+  });
 
-    event.preventDefault();
+  useEffect(() => {
+    const token = store.get("authorization");
+    if (token) {
+      ipcRenderer.send("FIRST_CONNECTION", { token });
+      ipcRenderer.on("FIRST_CONNECTION", (evt, payload) => {
+        if (payload) router.push("/list");
+      });
+    }
+  }, []);
+
+  const handleSubmit = (values: IFormData) => {
     // const data = new FormData(event.currentTarget);
     const userInfo = store.get("user");
+    console.log("userInfo", userInfo);
 
     if (userInfo) {
-      const userEmail = String(values.email);
-      ipcRenderer.send("SIGN_IN", { userEmail });
+      const email = String(values.email);
+      ipcRenderer.send("SIGN_IN", { email });
       ipcRenderer.on("TOKEN", (evt, payload) => {
         console.log("payload", payload);
         const token = payload;

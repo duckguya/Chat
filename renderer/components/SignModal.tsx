@@ -3,6 +3,10 @@ import store from "store";
 import { Modal } from "antd";
 import Sign from "./Sign";
 import styled from "styled-components";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 interface Props {
   open: boolean;
@@ -16,22 +20,26 @@ interface IFormData {
 }
 
 const SignModal = ({ open, handleOk, handleClose }: Props) => {
-  const storeInput = (userId, password) => {
+  const router = useRouter();
+
+  const storeInput = (email, password) => {
     const userInfo = {};
-    userInfo[userId] = password;
+    userInfo[email] = password;
     store.set("user", userInfo);
   };
-  const handleSubmit = (values: IFormData) => {
-    const userEmail = values.email;
+  const handleSubmit = async (values: IFormData) => {
+    const email = values.email;
     const password = values.password;
-    const passwordConfirm = values.passwordConfirm;
 
-    if (password !== passwordConfirm) {
-      return alert("비밀번호가 일치하지 않습니다.");
+    ipcRenderer.send("SIGN_UP", [email, password]);
+    storeInput(email, password);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push("/room");
+    } catch (error) {
+      console.log(error);
+      router.push("/home");
     }
-    console.log(userEmail, password, passwordConfirm);
-    // ipcRenderer.send("SIGN_UP", [userEmail, password]);
-    // storeInput(userEmail, password);
   };
 
   return (

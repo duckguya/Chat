@@ -23,7 +23,11 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [passCheck, setPassCheck] = useState(true);
 
   const onFinish = (values: IFormData) => {
-    handleSubmit(values);
+    if (!passCheck) {
+      return;
+    } else {
+      handleSubmit(values);
+    }
   };
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
@@ -130,5 +134,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
 };
 const FlagMessage = styled.p`
   color: tomato;
+  display: flex;
+  justify-content: center;
 `;
 export default Sign;
