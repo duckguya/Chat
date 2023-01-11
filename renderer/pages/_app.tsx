@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
@@ -14,8 +14,6 @@ import SignOut from "../components/SignOut";
 import { setPersistence } from "firebase/auth";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  console.log(auth.currentUser);
-
   return (
     <React.Fragment>
       <Head children={""}>
@@ -25,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         {/* <Link href="/home">
           <a style={{ padding: "0 10px" }}>home</a>
         </Link> */}
-        {auth && <SignOut />}
+        {auth.currentUser && <SignOut />}
       </Header>
       <Component {...pageProps} />
     </React.Fragment>
