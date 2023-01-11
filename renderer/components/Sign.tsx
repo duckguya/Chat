@@ -3,6 +3,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { Layout, Form, Select, Button, Input } from "antd";
 import styled from "styled-components";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { ipcRenderer } from "electron";
+import store from "store";
+import router from "next/router";
 
 const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
@@ -15,18 +20,43 @@ interface IFormData {
 }
 
 interface IProps {
-  handleSubmit: (IFormData: IFormData) => void;
   isSignIn: boolean;
+  handleSubmit?: (data) => void;
 }
 const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [password, setPassword] = useState("");
   const [passCheck, setPassCheck] = useState(true);
+  const [isLogin, setIsLogin] = useState(true);
 
-  const onFinish = (values: IFormData) => {
+  const onFinish = async (values: IFormData) => {
     if (!passCheck) {
-      return;
+      return setPassCheck(false);
     } else {
-      handleSubmit(values);
+      if (!isSignIn) {
+        handleSubmit(values);
+      }
+      try {
+        const userInfo = await signInWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        );
+
+        ipcRenderer.send("SIGN_IN", { email: values.email });
+
+        userInfo.user.getIdToken().then(function (idToken) {
+          ipcRenderer.send("TOKEN", {
+            accessToken: idToken,
+            refreshToken: userInfo.user.refreshToken,
+          });
+        });
+
+        router.push("/room");
+      } catch (error) {
+        ipcRenderer.send("SIGN_IN", false);
+        setIsLogin(false);
+        console.log(error);
+      }
     }
   };
   const onFinishFailed = (errorInfo: any) => {
@@ -91,6 +121,10 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
               onChange={handlePasswordChange}
             />
           </FormItem>
+          {!isLogin && isSignIn && (
+            <FlagMessage>이메일과 비밀번호를 확인해주세요.</FlagMessage>
+          )}
+
           {!isSignIn && (
             <>
               <FormItem

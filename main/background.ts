@@ -31,6 +31,10 @@ ipcMain.on("SIGN_UP", (evt, payload) => {
   console.log(payload);
 });
 
+ipcMain.on("SIGN_IN", (evt, payload: string) => {
+  console.log("sign in", payload);
+});
+
 app.on("window-all-closed", () => {
   app.quit();
 });

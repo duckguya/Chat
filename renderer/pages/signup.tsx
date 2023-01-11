@@ -1,12 +1,12 @@
 import { ipcRenderer } from "electron";
 import store from "store";
 import { Modal } from "antd";
-import Sign from "./Sign";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import Sign from "../components/Sign";
 
 interface Props {
   open: boolean;
@@ -19,7 +19,8 @@ interface IFormData {
   passwordConfirm?: string;
 }
 
-const SignModal = ({ open, handleOk, handleClose }: Props) => {
+const SignUp = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const storeInput = (email, password) => {
@@ -30,25 +31,47 @@ const SignModal = ({ open, handleOk, handleClose }: Props) => {
   const handleSubmit = async (values: IFormData) => {
     const email = values.email;
     const password = values.password;
-
-    ipcRenderer.send("SIGN_UP", [email, password]);
-    storeInput(email, password);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      router.push("/room");
+
+      ipcRenderer.send("SIGN_UP", [email, password]);
+      storeInput(email, password);
+      showModal();
     } catch (error) {
       console.log(error);
-      router.push("/home");
     }
   };
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
+  const handleOk = () => {
+    router.push("/home");
+
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    router.push("/home");
+    setIsModalOpen(false);
+  };
   return (
-    <div>
-      <Modal open={open} onOk={handleOk} onCancel={handleClose} footer={null}>
-        <Sign handleSubmit={handleSubmit} isSignIn={false} />
+    <>
+      <Sign isSignIn={false} handleSubmit={handleSubmit} />
+      <Modal
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        회원가입이 완료되었습니다. 로그인페이지로 이동합니다.
       </Modal>
-    </div>
+    </>
   );
 };
-
-export default SignModal;
+const FlagMessage = styled.p`
+  color: tomato;
+  display: flex;
+  justify-content: center;
+`;
+export default SignUp;
