@@ -16,18 +16,18 @@ const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
 const { Option } = Select;
 
-// const USERS = [
-//   { userId: "use1@gmail.com", password: "123123" },
-//   { userId: "use2@gmail.com", password: "123123" },
-//   { userId: "use3@gmail.com", password: "123123" },
-// ];
+const USERS = [
+  { userId: "use1@gmail.com", password: "123123" },
+  { userId: "use2@gmail.com", password: "123123" },
+  { userId: "use3@gmail.com", password: "123123" },
+];
 
 function Home() {
   const router = useRouter();
-
+  console.log(process.env.NODE_ENV);
   useEffect(() => {
     store.remove("user");
-    // store.set("user", USERS);
+    store.set("user", USERS);
   });
 
   useEffect(() => {

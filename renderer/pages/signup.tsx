@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, dbService } from "../firebase";
 import Sign from "../components/Sign";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 interface Props {
   open: boolean;
@@ -33,9 +34,12 @@ const SignUp = () => {
     const password = values.password;
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-
+      await addDoc(collection(dbService, "users"), {
+        email,
+        createdAt: Date.now(),
+      });
       ipcRenderer.send("SIGN_UP", [email, password]);
-      storeInput(email, password);
+
       showModal();
     } catch (error) {
       console.log(error);

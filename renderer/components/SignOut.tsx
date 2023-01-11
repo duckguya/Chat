@@ -19,10 +19,9 @@ const SignOut = () => {
       </Head>
 
       <Button
-        size="large"
+        size="small"
         type="primary"
-        htmlType="submit"
-        style={{ width: "100%" }}
+        style={{ width: "10%" }}
         onClick={onClicked}
       >
         로그아웃

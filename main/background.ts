@@ -2,6 +2,7 @@ import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 
+// const isProd: boolean = process.env.NODE_ENV === "development";
 const isProd: boolean = process.env.NODE_ENV === "production";
 
 if (isProd) {
