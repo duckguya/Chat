@@ -9,17 +9,12 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
+import { auth } from "../firebase";
+import SignOut from "../components/SignOut";
+import { setPersistence } from "firebase/auth";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDERID,
-    appId: process.env.REACT_APP_APP_ID,
-    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
-  };
+  console.log(auth.currentUser);
 
   return (
     <React.Fragment>
@@ -27,9 +22,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Header>
-        <Link href="/home">
+        {/* <Link href="/home">
           <a style={{ padding: "0 10px" }}>home</a>
-        </Link>
+        </Link> */}
+        {auth && <SignOut />}
       </Header>
       <Component {...pageProps} />
     </React.Fragment>
