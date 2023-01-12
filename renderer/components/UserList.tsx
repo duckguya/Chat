@@ -7,7 +7,8 @@ import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { userEmailAtom } from "../atoms";
+import { clickedIdAtom } from "../atoms";
+import Head from "next/head";
 
 interface UserList {
   userId: string;
@@ -22,7 +23,7 @@ interface Props {
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const setEmail = useSetRecoilState(userEmailAtom);
+  const setClickId = useSetRecoilState(clickedIdAtom);
   const router = useRouter();
 
   const getUsers = async () => {
@@ -48,13 +49,18 @@ const UserList = () => {
     getUsers();
   }, []);
 
-  const onClicked = (email: string) => {
-    setEmail(email as any);
+  const onClicked = (type: string) => {
+    setClickId(type);
     router.push("/chat");
   };
 
   return (
     <Container>
+      <Head children={""}>
+        <title>유저 리스트</title>
+      </Head>
+      <Button onClick={() => onClicked("group")}>그룹채팅</Button>
+
       {users.map((d, index) => (
         <Button
           block
