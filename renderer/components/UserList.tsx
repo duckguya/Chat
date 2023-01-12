@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { userEmailAtom } from "../atoms";
 
 interface UserList {
   userId: string;
@@ -20,7 +22,9 @@ interface Props {
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
+  const setEmail = useSetRecoilState(userEmailAtom);
   const router = useRouter();
+
   const getUsers = async () => {
     try {
       setUsers([]);
@@ -45,6 +49,7 @@ const UserList = () => {
   }, []);
 
   const onClicked = (email: string) => {
+    setEmail(email as any);
     router.push("/chat");
   };
 
