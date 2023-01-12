@@ -7,7 +7,6 @@ import store from "store"; /// store : local storage
 import { ipcRenderer } from "electron";
 import { useRouter } from "next/router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
 import { async } from "@firebase/util";
 import SignUp from "./signup";
 import Cookies from "universal-cookie";

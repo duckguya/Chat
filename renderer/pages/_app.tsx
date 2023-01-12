@@ -9,7 +9,6 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
-import { auth } from "../firebase";
 import SignOut from "../components/SignOut";
 import { setPersistence } from "firebase/auth";
 import Cookies from "universal-cookie";
@@ -39,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Link href="/home">
             <a style={{ padding: "0 10px" }}>home</a>
           </Link>
-          {auth.currentUser && <SignOut />}
+          {"auth.currentUser" && <SignOut />}
         </Header>
 
         <Component {...pageProps} />

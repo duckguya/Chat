@@ -2,8 +2,12 @@ import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import { Server } from "socket.io";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth, dbService } from "./firebase";
+import { addDoc, collection } from "firebase/firestore";
 // const isProd: boolean = process.env.NODE_ENV === "development";
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -53,9 +57,32 @@ if (isProd) {
   }
 })();
 
-ipcMain.on("SIGN_UP", (evt, payload) => {
-  console.log(payload);
-});
+ipcMain.on(
+  "SIGN_UP",
+  async (event, payload: { email: string; password: string }) => {
+    try {
+      console.log(payload);
+      console.log("auth", auth);
+      await createUserWithEmailAndPassword(
+        auth,
+        payload.email,
+        payload.password
+      );
+      await addDoc(collection(dbService, "users"), {
+        email: payload.email,
+        createdAt: Date.now(),
+      });
+      event.reply("SIGN_UP_STATE", {
+        message: "ok",
+      });
+    } catch (error) {
+      console.log("error: ", error);
+      event.reply("SIGN_UP_STATE", {
+        message: "fail",
+      });
+    }
+  }
+);
 
 ipcMain.on(
   "SIGN_IN",
@@ -76,10 +103,10 @@ ipcMain.on(
   }
 );
 
-// ipcMain.on("FIRST_CONNECTION", (evt, payload) => {
+// ipcMain.on("FIRST_CONNECTION", (event, payload) => {
 //   const isLogin = jwtToken.verify(payload.token.accessToken).ok;
 
-//   evt.reply("FIRST_CONNECTION", { isLogin });
+//   event.reply("FIRST_CONNECTION", { isLogin });
 // });
 
 app.on("window-all-closed", () => {

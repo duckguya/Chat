@@ -3,12 +3,12 @@ import Head from "next/head";
 import { Button } from "antd";
 import styled from "styled-components";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+// import { auth } from "../firebase";
 import router from "next/router";
 
 const SignOut = () => {
   const onClicked = () => {
-    signOut(auth);
+    // signOut('auth');
     router.push("/home");
   };
 

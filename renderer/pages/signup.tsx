@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, dbService } from "../firebase";
 import Sign from "../components/Sign";
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 
@@ -30,20 +29,16 @@ const SignUp = () => {
     store.set("user", userInfo);
   };
   const handleSubmit = async (values: IFormData) => {
-    const email = values.email;
-    const password = values.password;
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      await addDoc(collection(dbService, "users"), {
-        email,
-        createdAt: Date.now(),
-      });
-      ipcRenderer.send("SIGN_UP", [email, password]);
-
-      showModal();
-    } catch (error) {
-      console.log(error);
-    }
+    const userInfo = { email: values.email, password: values.password };
+    ipcRenderer.send("SIGN_UP", userInfo);
+    ipcRenderer.on("SIGN_UP_STATE", (event, payload) => {
+      console.log("payload", payload);
+      if (payload.message === "ok") {
+        showModal();
+      } else {
+        alert("error");
+      }
+    });
   };
   const showModal = () => {
     setIsModalOpen(true);

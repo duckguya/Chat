@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Layout, Form, Select, Button, Input } from "antd";
 import styled from "styled-components";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
 import { ipcRenderer } from "electron";
 import store from "store";
 import router from "next/router";
