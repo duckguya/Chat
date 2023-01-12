@@ -9,7 +9,7 @@ interface IData {
 
 export const userAtom = atom({
   key: "user",
-  default: "",
+  default: false,
 });
 
 export const clickedIdAtom = atom({

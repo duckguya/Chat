@@ -7,7 +7,6 @@ import { Button, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import styled from "styled-components";
 import Head from "next/head";
-import { auth } from "../firebase";
 
 const socket = io("http://localhost:3000");
 

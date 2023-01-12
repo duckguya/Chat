@@ -57,12 +57,17 @@ if (isProd) {
   }
 })();
 
+ipcMain.on("APP", (evnet, payload) => {
+  if (payload) {
+    console.log(auth.currentUser.email);
+    evnet.reply("AUTH", auth.currentUser.email);
+  }
+});
+
 ipcMain.on(
   "SIGN_UP",
   async (event, payload: { email: string; password: string }) => {
     try {
-      console.log(payload);
-      console.log("auth", auth);
       await createUserWithEmailAndPassword(
         auth,
         payload.email,

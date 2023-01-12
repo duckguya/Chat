@@ -9,6 +9,8 @@ import store from "store";
 import router from "next/router";
 import Cookies from "universal-cookie";
 import axios from "axios";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../atoms";
 
 const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
@@ -28,6 +30,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [password, setPassword] = useState("");
   const [passCheck, setPassCheck] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
+  const [isUser, setIsUser] = useRecoilState(userAtom);
 
   const onFinish = async (values: IFormData) => {
     if (!passCheck) {
@@ -49,6 +52,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
           (event, payload: { accessToken: string; refreshToken: string }) => {
             const cookies = new Cookies();
             cookies.set("chat-access-token", payload.accessToken);
+            setIsUser(true);
             if (window.location.pathname === "/home") {
               router.push("/room");
             } else [router.reload()];
