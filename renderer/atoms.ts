@@ -7,6 +7,11 @@ interface IData {
   textData: [];
 }
 
+export const userAtom = atom({
+  key: "user",
+  default: "",
+});
+
 export const clickedIdAtom = atom({
   key: "clickId",
   default: "",

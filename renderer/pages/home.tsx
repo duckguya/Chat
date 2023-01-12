@@ -10,6 +10,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { async } from "@firebase/util";
 import SignUp from "./signup";
+import Cookies from "universal-cookie";
 
 // IPC는 on을 통해 메시지 또는 이벤트를 수신하고 send를 통해 메시지 또는 이벤트를 전달한다.
 const { Header, Content } = Layout;
@@ -31,12 +32,10 @@ function Home() {
   });
 
   useEffect(() => {
-    const token = store.get("authorization");
+    const cookies = new Cookies();
+    const token = cookies.get("chat-access-token");
     if (token) {
-      ipcRenderer.send("FIRST_CONNECTION", { token });
-      ipcRenderer.on("FIRST_CONNECTION", (evt, payload) => {
-        if (payload) router.push("/list");
-      });
+      router.push("/room");
     }
   }, []);
 

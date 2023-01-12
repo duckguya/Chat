@@ -11,9 +11,13 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@types/react-cookies": "^0.1.0",
+    "axios": "^1.2.2",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",
     "firebase": "^9.15.0",
+    "next-cookies": "^2.0.3",
+    "react-cookies": "^0.1.1",
     "recoil": "^0.7.6",
     "recoil-persist": "^4.2.0",
     "socket.io": "^4.5.4",

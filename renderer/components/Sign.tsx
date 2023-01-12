@@ -8,6 +8,8 @@ import { auth } from "../firebase";
 import { ipcRenderer } from "electron";
 import store from "store";
 import router from "next/router";
+import Cookies from "universal-cookie";
+import axios from "axios";
 
 const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
@@ -36,20 +38,32 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         handleSubmit(values);
       }
       try {
-        const userInfo = await signInWithEmailAndPassword(
-          auth,
-          values.email,
-          values.password
+        // const userInfo = await signInWithEmailAndPassword(
+        //   auth,
+        //   values.email,
+        //   values.password
+        // );
+        const userInfo = { email: values.email, password: values.password };
+        ipcRenderer.send("SIGN_IN", userInfo);
+        ipcRenderer.on(
+          "TOKEN",
+          (event, payload: { accessToken: string; refreshToken: string }) => {
+            const cookies = new Cookies();
+            cookies.set("chat-access-token", payload.accessToken);
+            if (window.location.pathname === "/home") {
+              router.push("/room");
+            } else [router.reload()];
+          }
         );
 
-        ipcRenderer.send("SIGN_IN", { email: values.email });
+        // localStorage.setItem("user", JSON.stringify(userInfo));
 
-        userInfo.user.getIdToken().then(function (idToken) {
-          ipcRenderer.send("TOKEN", {
-            accessToken: idToken,
-            refreshToken: userInfo.user.refreshToken,
-          });
-        });
+        // userInfo.user.getIdToken().then(function (idToken) {
+        //   ipcRenderer.send("TOKEN", {
+        //     accessToken: idToken,
+        //     refreshToken: userInfo.user.refreshToken,
+        //   });
+        // });
 
         router.push("/room");
       } catch (error) {

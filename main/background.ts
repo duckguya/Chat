@@ -2,7 +2,8 @@ import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import { Server } from "socket.io";
-
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebase";
 // const isProd: boolean = process.env.NODE_ENV === "development";
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -39,7 +40,7 @@ if (isProd) {
   await app.whenReady();
 
   const mainWindow = createWindow("main", {
-    width: 600,
+    width: 1000,
     height: 750,
   });
 
@@ -56,17 +57,30 @@ ipcMain.on("SIGN_UP", (evt, payload) => {
   console.log(payload);
 });
 
-ipcMain.on("SIGN_IN", (evt, payload: string) => {
-  console.log("sign in", payload);
-});
+ipcMain.on(
+  "SIGN_IN",
+  async (event, payload: { email: string; password: string }) => {
+    if (payload) {
+      const userInfo = await signInWithEmailAndPassword(
+        auth,
+        payload.email,
+        payload.password
+      );
+      userInfo.user.getIdToken().then(function (idToken) {
+        event.reply("TOKEN", {
+          accessToken: idToken,
+          refreshToken: userInfo.user.refreshToken,
+        });
+      });
+    }
+  }
+);
 
-/*
-ipcMain.on("FIRST_CONNECTION", (evt, payload) => {
-  const isLogin = jwtToken.verify(payload.token.accessToken).ok;
+// ipcMain.on("FIRST_CONNECTION", (evt, payload) => {
+//   const isLogin = jwtToken.verify(payload.token.accessToken).ok;
 
-  evt.reply("FIRST_CONNECTION", { isLogin });
-});
-*/
+//   evt.reply("FIRST_CONNECTION", { isLogin });
+// });
 
 app.on("window-all-closed", () => {
   app.quit();
