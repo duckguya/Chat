@@ -2,11 +2,15 @@ import { Content } from "antd/lib/layout/layout";
 import { useRecoilState } from "recoil";
 import { clickedIdAtom, textAtom } from "../atoms";
 import io from "socket.io-client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import styled from "styled-components";
 import Head from "next/head";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { auth, dbService } from "../firebase";
+import Messages from "../components/Messages";
+import ChatInput from "../components/ChatInput";
 
 const socket = io("http://localhost:3000");
 
@@ -23,7 +27,12 @@ function Chat() {
   const [clickedId, setClickId] = useRecoilState(clickedIdAtom);
   const [inputData, setInputData] = useRecoilState(textAtom);
   const [chatTexts, setChatTexts] = useState<ChatText[]>([]);
+  // 포커싱과 하단 스크롤을 위한 useRef
+  const inputRef = useRef();
+  const bottomListRef = useRef();
 
+  // 채팅 메세지 생성시 useState로 새로운 메세지 저장
+  const [newMessage, setNewMessage] = useState("");
   const setTexts = () => {};
 
   const storageSetTexts = (data) => {};
@@ -39,42 +48,49 @@ function Chat() {
   }, []);
 
   const onFinished = async (values: IFormData) => {
-    // socket.emit("message", {
-    //   userId: auth.currentUser.email,
-    //   clickedId,
-    //   text: values.text,
-    // });
+    // 입력한 채팅 공백 제거
+    const trimmedMessage = newMessage.trim();
+    if (trimmedMessage) {
+      // Add new message in Firestore
+      await addDoc(collection(dbService, "messages"), {
+        createdAt: Date.now(),
+        email: "",
+        uid: "",
+        text: "",
+        roomId: "",
+      });
 
-    form.resetFields();
+      // Clear input field
+      setNewMessage("");
+      // Scroll down to the bottom of the list
+      // bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
-
+  // 채팅 작성했을 때 onChanghandler, onSubmitHandler
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    setNewMessage(e.target.value);
+  };
   return (
     <React.Fragment>
       <Container>
         <Head children={""}>
-          <title>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</title>
+          <title>
+            {clickedId === "group" ? "그룹대화" : { clickedId } + "님과의 대화"}
+          </title>
         </Head>
-        <div>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</div>
-        <ContentWrapper>
-          <div>대화내용</div>
-        </ContentWrapper>
-        <Form onFinish={onFinished}>
-          <FormWrapper>
-            <FormItem
-              name="text"
-              rules={[{ required: true, message: "메시지를 입력해주세요." }]}
-              style={{ width: "80%" }}
-            >
-              <Input size="large" />
-            </FormItem>
 
-            <FormItem>
-              <Button size="large" type="primary" htmlType="submit">
-                send
-              </Button>
-            </FormItem>
-          </FormWrapper>
-        </Form>
+        <ContentWrapper>
+          <div>
+            {clickedId === "group" ? "그룹대화" : { clickedId } + "님과의 대화"}
+          </div>
+          <Messages />
+        </ContentWrapper>
+        <ChatInput
+          newMessage={newMessage}
+          onFinished={onFinished}
+          handleOnChange={handleOnChange}
+        />
       </Container>
     </React.Fragment>
   );
@@ -88,23 +104,7 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 const ContentWrapper = styled.div`
-  overflow: scroll;
-`;
-const FormWrapper = styled.form`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const TextField = styled.input`
-  width: 80vw;
-  padding: 10px;
-  border-radius: 10px;
-`;
-const SendButton = styled.button`
-  border-radius: 10px;
-  border: 1px solid gray;
-  background-color: white;
-  padding: 10px;
+  /* overflow: scroll; */
 `;
 
 export default Chat;

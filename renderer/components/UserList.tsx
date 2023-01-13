@@ -74,7 +74,7 @@ const UserList = () => {
             style={{
               margin: "10px",
             }}
-            onClick={() => onClicked(d.email)}
+            onClick={() => onClicked(d.email)} //email:유니크
           >
             {d.email}
           </Button>
