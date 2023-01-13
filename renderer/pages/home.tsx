@@ -22,7 +22,7 @@ const USERS = [
   { userId: "use3@gmail.com", password: "123123" },
 ];
 
-function Home() {
+function Home(props) {
   const router = useRouter();
   console.log(process.env.NODE_ENV);
   useEffect(() => {

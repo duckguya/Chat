@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { clickedIdAtom } from "../atoms";
 import Head from "next/head";
+import { ipcRenderer } from "electron";
 
 interface UserList {
   userId: string;
@@ -27,7 +28,11 @@ const UserList = () => {
 
   const getUsers = async () => {
     try {
-      // setUsers([]);
+      setUsers([]);
+      ipcRenderer.send("REQ_USER_LIST", true);
+      ipcRenderer.on("RES_USER_LIST", (event, payload) => {
+        console.log(payload);
+      });
       // const q = query(collection(dbService, "users"));
       // const querySnapshot = await getDocs(q);
       // querySnapshot.forEach((doc) => {
@@ -35,8 +40,8 @@ const UserList = () => {
       //     ...doc.data(),
       //     id: doc.id,
       //   };
-      //   console.log(userObj);
-      //   setUsers((prev) => [userObj, ...prev]);
+      // console.log(userObj);
+      // setUsers((prev) => [userObj, ...prev]);
       // });
     } catch (error) {
       console.log(error);

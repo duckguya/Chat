@@ -10,6 +10,7 @@ interface IData {
 export const userAtom = atom({
   key: "user",
   default: false,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const clickedIdAtom = atom({

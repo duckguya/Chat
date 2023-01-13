@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ipcRenderer } from "electron";
 import store from "store";
-import router from "next/router";
+import router, { useRouter } from "next/router";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import { useRecoilState } from "recoil";
@@ -38,41 +38,46 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
     } else {
       if (!isSignIn) {
         handleSubmit(values);
-      }
-      try {
-        // const userInfo = await signInWithEmailAndPassword(
-        //   auth,
-        //   values.email,
-        //   values.password
-        // );
-        const userInfo = { email: values.email, password: values.password };
-        ipcRenderer.send("SIGN_IN", userInfo);
-        ipcRenderer.on(
-          "TOKEN",
-          (event, payload: { accessToken: string; refreshToken: string }) => {
-            const cookies = new Cookies();
-            cookies.set("chat-access-token", payload.accessToken);
-            setIsUser(true);
-            if (window.location.pathname === "/home") {
-              router.push("/room");
-            } else [router.reload()];
-          }
-        );
+      } else {
+        try {
+          // const userInfo = await signInWithEmailAndPassword(
+          //   auth,
+          //   values.email,
+          //   values.password
+          // );
+          const userInfo = { email: values.email, password: values.password };
+          ipcRenderer.send("SIGN_IN", userInfo);
+          ipcRenderer.on(
+            "TOKEN",
+            (event, payload: { accessToken: string; refreshToken: string }) => {
+              const cookies = new Cookies();
+              cookies.set("chat-access-token", payload.accessToken);
 
-        // localStorage.setItem("user", JSON.stringify(userInfo));
+              setIsUser(true);
 
-        // userInfo.user.getIdToken().then(function (idToken) {
-        //   ipcRenderer.send("TOKEN", {
-        //     accessToken: idToken,
-        //     refreshToken: userInfo.user.refreshToken,
-        //   });
-        // });
+              if (router.pathname === "/home") {
+                router.push("/room");
+              } else {
+                // router.reload();
+              }
+            }
+          );
 
-        router.push("/room");
-      } catch (error) {
-        ipcRenderer.send("SIGN_IN", false);
-        setIsLogin(false);
-        console.log(error);
+          // localStorage.setItem("user", JSON.stringify(userInfo));
+
+          // userInfo.user.getIdToken().then(function (idToken) {
+          //   ipcRenderer.send("TOKEN", {
+          //     accessToken: idToken,
+          //     refreshToken: userInfo.user.refreshToken,
+          //   });
+          // });
+
+          router.push("/room");
+        } catch (error) {
+          ipcRenderer.send("SIGN_IN", false);
+          setIsLogin(false);
+          console.log(error);
+        }
       }
     }
   };

@@ -14,10 +14,7 @@ const SignOut = () => {
   const [isUser, setIsUser] = useRecoilState(userAtom);
 
   useEffect(() => {
-    const token = cookies.get("chat-access-token");
-    if (token) {
-      setIsUser(false);
-    }
+    setIsUser(false);
   }, []);
 
   const onClicked = () => {

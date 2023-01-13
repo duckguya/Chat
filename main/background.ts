@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, dbService } from "./firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 // const isProd: boolean = process.env.NODE_ENV === "development";
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -114,6 +114,22 @@ ipcMain.on(
 //   event.reply("FIRST_CONNECTION", { isLogin });
 // });
 
+ipcMain.on("REQ_USER_LIST", async (event, payload) => {
+  const q = query(collection(dbService, "users"));
+  const querySnapshot = await getDocs(q);
+  let userData = [];
+  console.log("1");
+  querySnapshot.forEach((doc) => {
+    const userObj = {
+      ...doc.data(),
+      id: doc.id,
+    };
+    console.log("2");
+    userData.push((prev) => [userObj, ...prev]);
+  });
+  console.log("back userData", userData);
+  event.reply("RES_USER_LIST", userData);
+});
 app.on("window-all-closed", () => {
   app.quit();
 });
