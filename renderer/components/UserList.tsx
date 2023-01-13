@@ -10,6 +10,7 @@ import { clickedIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
 import { dbService } from "../firebase";
+import React from "react";
 
 interface UserList {
   userId: string;
@@ -56,25 +57,27 @@ const UserList = () => {
   };
 
   return (
-    <Container>
-      <Head children={""}>
-        <title>유저 리스트</title>
-      </Head>
-      <Button onClick={() => onClicked("group")}>그룹채팅</Button>
+    <React.Fragment>
+      <Container>
+        <Head children={""}>
+          <title>유저 리스트</title>
+        </Head>
+        <Button onClick={() => onClicked("group")}>그룹채팅</Button>
 
-      {users.map((d, index) => (
-        <Button
-          block
-          key={index}
-          style={{
-            margin: "10px",
-          }}
-          onClick={() => onClicked(d.email)}
-        >
-          {d.email}
-        </Button>
-      ))}
-    </Container>
+        {users.map((d, index) => (
+          <Button
+            block
+            key={index}
+            style={{
+              margin: "10px",
+            }}
+            onClick={() => onClicked(d.email)}
+          >
+            {d.email}
+          </Button>
+        ))}
+      </Container>
+    </React.Fragment>
   );
 };
 

@@ -15,6 +15,7 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 import { ipcRenderer } from "electron";
 import { userAtom } from "../atoms";
+import type { NextPage } from "next";
 
 // axios.defaults.baseURL = "https://localhost:8888";
 // axios.defaults.withCredentials = true;

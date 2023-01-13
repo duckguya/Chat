@@ -2,7 +2,7 @@ import { Content } from "antd/lib/layout/layout";
 import { useRecoilState } from "recoil";
 import { clickedIdAtom, textAtom } from "../atoms";
 import io from "socket.io-client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Input } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import styled from "styled-components";
@@ -49,32 +49,34 @@ function Chat() {
   };
 
   return (
-    <Container>
-      <Head children={""}>
-        <title>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</title>
-      </Head>
-      <div>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</div>
-      <ContentWrapper>
-        <div>대화내용</div>
-      </ContentWrapper>
-      <Form onFinish={onFinished}>
-        <FormWrapper>
-          <FormItem
-            name="text"
-            rules={[{ required: true, message: "메시지를 입력해주세요." }]}
-            style={{ width: "80%" }}
-          >
-            <Input size="large" />
-          </FormItem>
+    <React.Fragment>
+      <Container>
+        <Head children={""}>
+          <title>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</title>
+        </Head>
+        <div>{clickedId === "group" ? "그룹대화" : "님과의 대화"}</div>
+        <ContentWrapper>
+          <div>대화내용</div>
+        </ContentWrapper>
+        <Form onFinish={onFinished}>
+          <FormWrapper>
+            <FormItem
+              name="text"
+              rules={[{ required: true, message: "메시지를 입력해주세요." }]}
+              style={{ width: "80%" }}
+            >
+              <Input size="large" />
+            </FormItem>
 
-          <FormItem>
-            <Button size="large" type="primary" htmlType="submit">
-              send
-            </Button>
-          </FormItem>
-        </FormWrapper>
-      </Form>
-    </Container>
+            <FormItem>
+              <Button size="large" type="primary" htmlType="submit">
+                send
+              </Button>
+            </FormItem>
+          </FormWrapper>
+        </Form>
+      </Container>
+    </React.Fragment>
   );
 }
 const Container = styled.div`

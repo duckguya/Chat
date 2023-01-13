@@ -57,9 +57,7 @@ if (isProd) {
   }
 })();
 
-ipcMain.on("SIGN_UP", (event, payload) => {
-  console.log("");
-});
+ipcMain.on("SIGN_UP", (event, payload) => {});
 
 ipcMain.on("SIGN_IN", (event, payload) => {});
 

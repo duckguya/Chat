@@ -13,25 +13,11 @@ import Cookies from "universal-cookie";
 import { auth } from "../firebase";
 
 // IPC는 on을 통해 메시지 또는 이벤트를 수신하고 send를 통해 메시지 또는 이벤트를 전달한다.
-const { Header, Content } = Layout;
-const { Item: FormItem } = Form;
-const { Option } = Select;
 
-const USERS = [
-  { userId: "use1@gmail.com", password: "123123" },
-  { userId: "use2@gmail.com", password: "123123" },
-  { userId: "use3@gmail.com", password: "123123" },
-];
-
-function Home(props) {
+function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // const cookies = new Cookies();
-    // const token = cookies.get("chat-access-token");
-    // if (token) {
-    //   router.push("/room");
-    // }
     auth.onAuthStateChanged((user) => {
       if (user) {
         router.push("/room");
@@ -40,7 +26,6 @@ function Home(props) {
   }, []);
 
   const handleModalClick = () => {
-    // setIsModalOpen(true);
     router.push("/signup");
   };
   return (
