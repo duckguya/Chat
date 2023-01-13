@@ -9,7 +9,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { clickedIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
-import { dbService } from "../firebase";
+import { auth, dbService } from "../firebase";
 import React from "react";
 
 interface UserList {
@@ -31,7 +31,10 @@ const UserList = () => {
   const getUsers = async () => {
     try {
       setUsers([]);
-      const q = query(collection(dbService, "users"));
+      const q = query(
+        collection(dbService, "users"),
+        where("uid", "!=", auth.currentUser.uid)
+      );
       const querySnapshot = await getDocs(q);
       let userData = [];
       querySnapshot.forEach((doc) => {

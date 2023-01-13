@@ -31,10 +31,15 @@ const SignUp = () => {
 
   const handleSubmit = async (values: IFormData) => {
     try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const newUser = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
       await addDoc(collection(dbService, "users"), {
         email: values.email,
         createdAt: Date.now(),
+        uid: newUser.user.uid,
       });
       // showModal();
     } catch (error) {
