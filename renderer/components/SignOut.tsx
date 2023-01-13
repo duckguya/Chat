@@ -8,19 +8,28 @@ import router from "next/router";
 import Cookies from "universal-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms";
+import { auth } from "../firebase";
 
 const SignOut = () => {
   const cookies = new Cookies();
   const [isUser, setIsUser] = useRecoilState(userAtom);
 
   useEffect(() => {
-    setIsUser(false);
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsUser(true);
+      }
+    });
   }, []);
 
-  const onClicked = () => {
-    setIsUser(false);
-    cookies.remove("chat-access-token");
-    router.push("/home");
+  const onClicked = async () => {
+    try {
+      await auth.signOut();
+      setIsUser(false);
+      router.push("/home");
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (

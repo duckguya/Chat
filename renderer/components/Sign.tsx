@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Layout, Form, Select, Button, Input } from "antd";
@@ -11,6 +11,7 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms";
+import { auth } from "../firebase";
 
 const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
@@ -32,46 +33,27 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [isUser, setIsUser] = useRecoilState(userAtom);
 
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/room");
+      }
+    });
+  }, []);
+
   const onFinish = async (values: IFormData) => {
     if (!passCheck) {
       return setPassCheck(false);
     } else {
       if (!isSignIn) {
+        // 회원가입이라면
         handleSubmit(values);
       } else {
+        // 로그인이라면
         try {
-          // const userInfo = await signInWithEmailAndPassword(
-          //   auth,
-          //   values.email,
-          //   values.password
-          // );
-          const userInfo = { email: values.email, password: values.password };
-          ipcRenderer.send("SIGN_IN", userInfo);
-          ipcRenderer.on(
-            "TOKEN",
-            (event, payload: { accessToken: string; refreshToken: string }) => {
-              const cookies = new Cookies();
-              cookies.set("chat-access-token", payload.accessToken);
+          await signInWithEmailAndPassword(auth, values.email, values.password);
 
-              setIsUser(true);
-
-              if (router.pathname === "/home") {
-                router.push("/room");
-              } else {
-                // router.reload();
-              }
-            }
-          );
-
-          // localStorage.setItem("user", JSON.stringify(userInfo));
-
-          // userInfo.user.getIdToken().then(function (idToken) {
-          //   ipcRenderer.send("TOKEN", {
-          //     accessToken: idToken,
-          //     refreshToken: userInfo.user.refreshToken,
-          //   });
-          // });
-
+          setIsUser(true);
           router.push("/room");
         } catch (error) {
           ipcRenderer.send("SIGN_IN", false);

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import Sign from "../components/Sign";
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { auth, dbService } from "../firebase";
 
 interface Props {
   open: boolean;
@@ -23,22 +24,25 @@ const SignUp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
-  const storeInput = (email, password) => {
-    const userInfo = {};
-    userInfo[email] = password;
-    store.set("user", userInfo);
-  };
   const handleSubmit = async (values: IFormData) => {
-    const userInfo = { email: values.email, password: values.password };
-    ipcRenderer.send("SIGN_UP", userInfo);
-    ipcRenderer.on("SIGN_UP_STATE", (event, payload) => {
-      console.log("payload", payload);
-      if (payload.message === "ok") {
-        showModal();
-      } else {
-        alert("error");
-      }
-    });
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      await addDoc(collection(dbService, "users"), {
+        email: values.email,
+        createdAt: Date.now(),
+      });
+      showModal();
+    } catch (error) {
+      console.log("error: ", error);
+    }
+    // ipcRenderer.send("SIGN_UP", userInfo);
+    // ipcRenderer.on("SIGN_UP_STATE", (event, payload) => {
+    //   if (payload.message === "ok") {
+    //     showModal();
+    //   } else {
+    //     alert("error");
+    //   }
+    // });
   };
   const showModal = () => {
     setIsModalOpen(true);

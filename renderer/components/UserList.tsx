@@ -9,6 +9,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { clickedIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
+import { dbService } from "../firebase";
 
 interface UserList {
   userId: string;
@@ -29,20 +30,17 @@ const UserList = () => {
   const getUsers = async () => {
     try {
       setUsers([]);
-      ipcRenderer.send("REQ_USER_LIST", true);
-      ipcRenderer.on("RES_USER_LIST", (event, payload) => {
-        console.log(payload);
+      const q = query(collection(dbService, "users"));
+      const querySnapshot = await getDocs(q);
+      let userData = [];
+      querySnapshot.forEach((doc) => {
+        const userObj = {
+          ...doc.data(),
+          id: doc.id,
+        };
+        userData.push(userObj);
       });
-      // const q = query(collection(dbService, "users"));
-      // const querySnapshot = await getDocs(q);
-      // querySnapshot.forEach((doc) => {
-      //   const userObj = {
-      //     ...doc.data(),
-      //     id: doc.id,
-      //   };
-      // console.log(userObj);
-      // setUsers((prev) => [userObj, ...prev]);
-      // });
+      setUsers(userData);
     } catch (error) {
       console.log(error);
     }

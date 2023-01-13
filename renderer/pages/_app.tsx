@@ -16,26 +16,27 @@ import axios from "axios";
 import { ipcRenderer } from "electron";
 import { userAtom } from "../atoms";
 
-axios.defaults.baseURL = "https://localhost:8888";
-axios.defaults.withCredentials = true;
+// axios.defaults.baseURL = "https://localhost:8888";
+// axios.defaults.withCredentials = true;
 
 function MyApp({ Component, pageProps }: AppProps) {
   const cookies = new Cookies();
 
-  useEffect(() => {
-    const token = cookies.get("chat-access-token");
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-    } else {
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = cookies.get("chat-access-token");
+  //   if (token) {
+  //     axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+  //   } else {
+
+  //   }
+  // }, []);
 
   return (
-    <RecoilRoot>
-      <React.Fragment>
-        <Head children={""}>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
+    <React.Fragment>
+      <Head children={""}>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <RecoilRoot children={""}>
         <Header>
           <Link href="/room">
             <a style={{ padding: "0 10px" }}>room</a>
@@ -47,8 +48,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         </Header>
 
         <Component {...pageProps} />
-      </React.Fragment>
-    </RecoilRoot>
+      </RecoilRoot>
+    </React.Fragment>
   );
 }
 

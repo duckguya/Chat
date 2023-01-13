@@ -2,12 +2,12 @@ import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import { Server } from "socket.io";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth, dbService } from "./firebase";
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+// import {
+// createUserWithEmailAndPassword,
+// signInWithEmailAndPassword,
+// } from "firebase/auth";
+// import { auth, dbService } from "../renderer/firebase";
+// import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 // const isProd: boolean = process.env.NODE_ENV === "development";
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -57,56 +57,11 @@ if (isProd) {
   }
 })();
 
-ipcMain.on("APP", (evnet, payload) => {
-  if (payload) {
-    console.log(auth.currentUser.email);
-    evnet.reply("AUTH", auth.currentUser.email);
-  }
+ipcMain.on("SIGN_UP", (event, payload) => {
+  console.log("");
 });
 
-ipcMain.on(
-  "SIGN_UP",
-  async (event, payload: { email: string; password: string }) => {
-    try {
-      await createUserWithEmailAndPassword(
-        auth,
-        payload.email,
-        payload.password
-      );
-      await addDoc(collection(dbService, "users"), {
-        email: payload.email,
-        createdAt: Date.now(),
-      });
-      event.reply("SIGN_UP_STATE", {
-        message: "ok",
-      });
-    } catch (error) {
-      console.log("error: ", error);
-      event.reply("SIGN_UP_STATE", {
-        message: "fail",
-      });
-    }
-  }
-);
-
-ipcMain.on(
-  "SIGN_IN",
-  async (event, payload: { email: string; password: string }) => {
-    if (payload) {
-      const userInfo = await signInWithEmailAndPassword(
-        auth,
-        payload.email,
-        payload.password
-      );
-      userInfo.user.getIdToken().then(function (idToken) {
-        event.reply("TOKEN", {
-          accessToken: idToken,
-          refreshToken: userInfo.user.refreshToken,
-        });
-      });
-    }
-  }
-);
+ipcMain.on("SIGN_IN", (event, payload) => {});
 
 // ipcMain.on("FIRST_CONNECTION", (event, payload) => {
 //   const isLogin = jwtToken.verify(payload.token.accessToken).ok;
@@ -114,22 +69,7 @@ ipcMain.on(
 //   event.reply("FIRST_CONNECTION", { isLogin });
 // });
 
-ipcMain.on("REQ_USER_LIST", async (event, payload) => {
-  const q = query(collection(dbService, "users"));
-  const querySnapshot = await getDocs(q);
-  let userData = [];
-  console.log("1");
-  querySnapshot.forEach((doc) => {
-    const userObj = {
-      ...doc.data(),
-      id: doc.id,
-    };
-    console.log("2");
-    userData.push((prev) => [userObj, ...prev]);
-  });
-  console.log("back userData", userData);
-  event.reply("RES_USER_LIST", userData);
-});
+ipcMain.on("REQ_USER_LIST", async (event, payload) => {});
 app.on("window-all-closed", () => {
   app.quit();
 });
