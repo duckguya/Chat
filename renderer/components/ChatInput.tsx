@@ -17,7 +17,7 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
           <FormItem name="text" style={{ width: "80%" }}>
             <Input
               size="large"
-              //   value={newMessage}
+              value={newMessage}
               onChange={handleOnChange}
               placeholder="메시지를 입력하세요."
             />

@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { roomTypeAtom } from "../atoms";
+import { roomIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
 import { auth, dbService } from "../firebase";
@@ -25,7 +25,7 @@ interface Props {
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const setRoomType = useSetRecoilState(roomTypeAtom);
+  const setRoomId = useSetRecoilState(roomIdAtom);
   const router = useRouter();
 
   const getUsers = async () => {
@@ -59,7 +59,7 @@ const UserList = () => {
     uid?: string;
   }
   const onClicked = ({ type, uid }: onClickedData) => {
-    setRoomType(type);
+    setRoomId(type);
     router.push(`/chats/${uid}`);
   };
 

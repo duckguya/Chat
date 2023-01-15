@@ -13,8 +13,8 @@ export const userAtom = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const roomTypeAtom = atom({
-  key: "roomType",
+export const roomIdAtom = atom({
+  key: "roomIdAtom",
   default: "",
 });
 
