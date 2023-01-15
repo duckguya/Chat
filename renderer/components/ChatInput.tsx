@@ -11,6 +11,7 @@ interface IProps {
 function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
   return (
     <React.Fragment>
+      {/* onSubmit={(e) => e.preventDefault()} */}
       <Form onFinish={onFinished}>
         <FormWrapper>
           <FormItem name="text" style={{ width: "80%" }}>
@@ -37,7 +38,7 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
     </React.Fragment>
   );
 }
-const FormWrapper = styled.form`
+const FormWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `;

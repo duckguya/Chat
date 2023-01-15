@@ -9,7 +9,7 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
-import SignOut from "../components/SignOut";
+// import SignOut from "../components/SignOut";
 import { setPersistence } from "firebase/auth";
 import Cookies from "universal-cookie";
 import axios from "axios";
@@ -19,6 +19,8 @@ import type { NextPage } from "next";
 
 // axios.defaults.baseURL = "https://localhost:8888";
 // axios.defaults.withCredentials = true;
+import dynamic from "next/dynamic";
+const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
 function MyApp({ Component, pageProps }: AppProps) {
   const cookies = new Cookies();

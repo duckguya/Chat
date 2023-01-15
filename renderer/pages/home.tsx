@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Layout, Form, Select, Button, Modal } from "antd";
-import Sign from "../components/Sign";
+// import Sign from "../components/Sign";
 import store from "store"; /// store : local storage
 import { ipcRenderer } from "electron";
 import { useRouter } from "next/router";
@@ -12,7 +12,9 @@ import SignUp from "./signup";
 import Cookies from "universal-cookie";
 import { auth } from "../firebase";
 
-// IPC는 on을 통해 메시지 또는 이벤트를 수신하고 send를 통해 메시지 또는 이벤트를 전달한다.
+import type { NextPage } from "next";
+import dynamic from "next/dynamic";
+const Sign = dynamic(() => import("../components/Sign"), { ssr: false });
 
 function Home() {
   const router = useRouter();

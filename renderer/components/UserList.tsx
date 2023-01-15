@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { clickedIdAtom } from "../atoms";
+import { roomTypeAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
 import { auth, dbService } from "../firebase";
@@ -25,7 +25,7 @@ interface Props {
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const setClickId = useSetRecoilState(clickedIdAtom);
+  const setRoomType = useSetRecoilState(roomTypeAtom);
   const router = useRouter();
 
   const getUsers = async () => {
@@ -54,9 +54,13 @@ const UserList = () => {
     getUsers();
   }, []);
 
-  const onClicked = (type: string) => {
-    setClickId(type);
-    router.push("/chat");
+  interface onClickedData {
+    type: string;
+    uid?: string;
+  }
+  const onClicked = ({ type, uid }: onClickedData) => {
+    setRoomType(type);
+    router.push(`/chats/${uid}`);
   };
 
   return (
@@ -65,7 +69,7 @@ const UserList = () => {
         <Head children={""}>
           <title>유저 리스트</title>
         </Head>
-        <Button onClick={() => onClicked("group")}>그룹채팅</Button>
+        <Button onClick={() => onClicked({ type: "group" })}>그룹채팅</Button>
 
         {users.map((d, index) => (
           <Button
@@ -74,7 +78,7 @@ const UserList = () => {
             style={{
               margin: "10px",
             }}
-            onClick={() => onClicked(d.email)} //email:유니크
+            onClick={() => onClicked({ type: d.email, uid: d.uid })}
           >
             {d.email}
           </Button>

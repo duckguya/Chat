@@ -1,6 +1,5 @@
 import { Content } from "antd/lib/layout/layout";
 import { useRecoilState } from "recoil";
-import { roomTypeAtom, textAtom } from "../atoms";
 import io from "socket.io-client";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Form, Input } from "antd";
@@ -8,9 +7,11 @@ import FormItem from "antd/es/form/FormItem";
 import styled from "styled-components";
 import Head from "next/head";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { auth, dbService } from "../firebase";
-import Messages from "../components/Messages";
-import ChatInput from "../components/ChatInput";
+import { roomTypeAtom, textAtom } from "../../atoms";
+import { auth, dbService } from "../../firebase";
+import Messages from "../../components/Messages";
+import ChatInput from "../../components/ChatInput";
+import router from "next/router";
 
 const socket = io("http://localhost:3000");
 
@@ -22,8 +23,9 @@ interface ChatText {
   text: string;
 }
 
-function Chat(props) {
-  const [form] = Form.useForm();
+export default function Chats() {
+  const roomId = router.query.params || "";
+
   const [roomType, setRoomType] = useRecoilState(roomTypeAtom);
   const [inputData, setInputData] = useRecoilState(textAtom);
   const [chatTexts, setChatTexts] = useState<ChatText[]>([]);
@@ -48,13 +50,13 @@ function Chat(props) {
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
       // Add new message in Firestore
-      await addDoc(collection(dbService, "messages"), {
-        createdAt: Date.now(),
-        uid: "",
-        text: values.text,
-        roomType: roomType,
-        authors: ["", ""],
-      });
+      //   await addDoc(collection(dbService, "messages"), {
+      //     createdAt: Date.now(),
+      //     author: auth.currentUser.uid,
+      //     text: values.text,
+      //     roomType: roomType,
+      //     rooms: [auth.currentUser.uid, roomId],
+      //   });
 
       // Clear input field
       setNewMessage("");
@@ -64,6 +66,7 @@ function Chat(props) {
   };
   // 채팅 작성했을 때 onChanghandler, onSubmitHandler
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
     setNewMessage(e.target.value);
   };
   return (
@@ -71,13 +74,13 @@ function Chat(props) {
       <Container>
         <Head children={""}>
           <title>
-            {roomType === "group" ? "그룹대화" : { roomType } + "님과의 대화"}
+            {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </title>
         </Head>
 
         <ContentWrapper>
           <div>
-            {roomType === "group" ? "그룹대화" : { roomType } + "님과의 대화"}
+            {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </div>
           <Messages />
         </ContentWrapper>
@@ -101,5 +104,3 @@ const Container = styled.div`
 const ContentWrapper = styled.div`
   /* overflow: scroll; */
 `;
-
-export default Chat;
