@@ -11,6 +11,7 @@ import Head from "next/head";
 import { ipcRenderer } from "electron";
 import { auth, dbService } from "../firebase";
 import React from "react";
+import Cookies from "universal-cookie";
 
 interface UserList {
   userId: string;
@@ -25,32 +26,48 @@ interface Props {
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
+  const [uid, setUid] = useState("false");
   const setRoomId = useSetRecoilState(roomIdAtom);
   const router = useRouter();
 
   const getUsers = async () => {
-    try {
-      setUsers([]);
-      const q = query(
-        collection(dbService, "users"),
-        where("uid", "!=", auth.currentUser.uid)
-      );
-      const querySnapshot = await getDocs(q);
-      let userData = [];
-      querySnapshot.forEach((doc) => {
-        const userObj = {
-          ...doc.data(),
-          id: doc.id,
-        };
-        userData.push(userObj);
-      });
-      setUsers(userData);
-    } catch (error) {
-      console.log(error);
+    ipcRenderer.send("PROFILE");
+    console.log(1);
+    ipcRenderer.on("PROFILE", (evnet, payload) => {
+      console.log(2);
+      console.log("????", payload);
+      if (payload) {
+        setUid(payload);
+      }
+    });
+
+    if (uid !== "false") {
+      try {
+        setUsers([]);
+        const q = query(
+          collection(dbService, "users"),
+          where("uid", "!=", uid)
+        );
+        const querySnapshot = await getDocs(q);
+        let userData = [];
+        querySnapshot.forEach((doc) => {
+          const userObj = {
+            ...doc.data(),
+            id: doc.id,
+          };
+          userData.push(userObj);
+        });
+        setUsers(userData);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      router.push("/");
     }
   };
 
   useEffect(() => {
+    console.log("anjsi");
     getUsers();
   }, []);
 

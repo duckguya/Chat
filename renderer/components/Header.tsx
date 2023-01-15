@@ -5,25 +5,30 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms";
 import { auth } from "../firebase";
+import Cookies from "universal-cookie";
+import { ipcRenderer } from "electron";
+import { useRouter } from "next/router";
 
 const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
 function Nav() {
-  const [isLogin, setIsLogin] = useRecoilState(userAtom);
-
+  const cookies = new Cookies();
+  const [token, setToken] = useState(false);
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log("??");
-        setIsLogin(true);
+    ipcRenderer.send("CONNECTION");
+    ipcRenderer.on("CONNECTION", (evnet, payload) => {
+      console.log("payload", payload);
+      if (payload) {
+        setToken(true);
       }
     });
+    console.log(token);
   }, []);
 
   return (
     <React.Fragment>
       <Header>
-        {isLogin && (
+        {token && (
           <>
             <Link href="/room">
               <a style={{ padding: "0 10px" }}>room</a>

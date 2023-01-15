@@ -5,6 +5,7 @@ import { store } from "store";
 import { useRouter } from "next/router";
 import UserList from "../components/UserList";
 import { Button } from "antd";
+import { ipcRenderer } from "electron";
 
 function Room() {
   return (

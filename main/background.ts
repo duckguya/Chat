@@ -1,7 +1,9 @@
-import { app, ipcMain } from "electron";
+import { app, ipcMain, session } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import { Server } from "socket.io";
+import Cookies from "universal-cookie";
+
 // import {
 // createUserWithEmailAndPassword,
 // signInWithEmailAndPassword,
@@ -59,13 +61,59 @@ if (isProd) {
 
 ipcMain.on("SIGN_UP", (event, payload) => {});
 
-ipcMain.on("SIGN_IN", (event, payload) => {});
+ipcMain.on("SIGN_IN", (event, { idToken, uid }) => {
+  session.defaultSession.cookies
+    .set({
+      url: "http://localhost:3000/*",
+      name: "token",
+      value: idToken,
+      httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
+      // expirationDate: 10,
+    })
+    .then(() => {
+      event.reply("TOKEN", true);
+    });
+  session.defaultSession.cookies
+    .set({ url: "http://localhost:3000/*", name: "uid", value: uid })
+    .then(() => {});
+});
 
-// ipcMain.on("FIRST_CONNECTION", (event, payload) => {
-//   const isLogin = jwtToken.verify(payload.token.accessToken).ok;
+ipcMain.on("PROFILE", (event, payload) => {
+  session.defaultSession.cookies
+    .get({
+      url: "http://localhost:3000/*",
+      name: "uid",
+    })
+    .then((cookies) => {
+      if (cookies.length > 0) {
+        event.reply("PROFILE", cookies[0]?.value);
+      } else {
+        event.reply("PROFILE", "false");
+      }
+    });
+});
 
-//   event.reply("FIRST_CONNECTION", { isLogin });
-// });
+ipcMain.on("CONNECTION", async (event, payload) => {
+  // const isLogin = cookies.verify(payload.token.accessToken).ok;
+  session.defaultSession.cookies
+    .get({
+      url: "http://localhost:3000/*",
+      name: "token",
+    })
+    .then((cookies) => {
+      if (cookies.length > 0) {
+        event.reply("CONNECTION", true);
+      } else {
+        event.reply("CONNECTION", false);
+      }
+    });
+  // console.log("payload.token", payload.token);
+  // if (payload.token === token && token) {
+  //   event.reply("LOGIN_CONNECTION", true);
+  // } else {
+  //   event.reply("LOGIN_CONNECTION", false);
+  // }
+});
 
 ipcMain.on("REQ_USER_LIST", async (event, payload) => {});
 app.on("window-all-closed", () => {

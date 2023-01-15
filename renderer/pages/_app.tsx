@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
@@ -16,10 +16,20 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { auth } from "../firebase";
 import Nav from "../components/Header";
+import axios from "axios";
+import { ipcRenderer } from "electron";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const cookies = new Cookies();
-
+  const router = useRouter();
+  useEffect(() => {
+    ipcRenderer.send("CONNECTION");
+    ipcRenderer.on("CONNECTION", (evnet, payload) => {
+      if (!payload) {
+        router.push("/");
+      }
+    });
+  }, []);
   return (
     <React.Fragment>
       <Head children={""}>

@@ -5,10 +5,11 @@ import { Layout, Form, Select, Button, Input } from "antd";
 import styled from "styled-components";
 import {
   browserSessionPersistence,
+  getAuth,
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { ipcRenderer } from "electron";
+import { ipcRenderer, session } from "electron";
 import store from "store";
 import router, { useRouter } from "next/router";
 import Cookies from "universal-cookie";
@@ -35,7 +36,6 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [password, setPassword] = useState("");
   const [passCheck, setPassCheck] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
-  const [isUser, setIsUser] = useRecoilState(userAtom);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -56,11 +56,16 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         // 로그인이라면
         try {
           await signInWithEmailAndPassword(auth, values.email, values.password);
-
-          setIsUser(true);
-          router.push("/room");
+          // const cookies = new Cookies();
+          auth.currentUser.getIdToken().then(function (idToken) {
+            ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
+            ipcRenderer.on("SIGN_IN", (evnet, payload) => {
+              if (payload) {
+                router.push("/room");
+              }
+            });
+          });
         } catch (error) {
-          ipcRenderer.send("SIGN_IN", false);
           setIsLogin(false);
           console.log(error);
         }

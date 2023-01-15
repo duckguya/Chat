@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Button } from "antd";
 import styled from "styled-components";
@@ -12,21 +12,12 @@ import { auth } from "../firebase";
 
 const SignOut = () => {
   const cookies = new Cookies();
-  const [isUser, setIsUser] = useRecoilState(userAtom);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsUser(true);
-      }
-    });
-  }, []);
 
   const onClicked = async () => {
     try {
+      // cookies.remove("chat-access-token", { path: "/" });
       await auth.signOut();
-      setIsUser(false);
-      router.push("/home");
+      router.push("/");
     } catch (error) {
       console.log("error", error);
     }
