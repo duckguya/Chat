@@ -34,16 +34,16 @@ const SignOut = () => {
 
   return (
     <React.Fragment>
-      {isUser && (
-        <Button
-          size="small"
-          type="primary"
-          style={{ width: "10%" }}
-          onClick={onClicked}
-        >
-          로그아웃
-        </Button>
-      )}
+      {/* {isUser && ( */}
+      <Button
+        size="small"
+        type="primary"
+        style={{ width: "10%" }}
+        onClick={onClicked}
+      >
+        로그아웃
+      </Button>
+      {/* )} */}
     </React.Fragment>
   );
 };

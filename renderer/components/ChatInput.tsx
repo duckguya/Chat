@@ -14,8 +14,9 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
       {/* onSubmit={(e) => e.preventDefault()} */}
       <Form onFinish={onFinished}>
         <FormWrapper>
-          <FormItem name="text" style={{ width: "80%" }}>
+          <FormItem name="text">
             <Input
+              className="flex_item1"
               size="large"
               value={newMessage}
               onChange={handleOnChange}
@@ -25,12 +26,13 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
 
           <FormItem>
             <Button
+              className="flex_item2"
               size="large"
               type="primary"
               htmlType="submit"
               disabled={newMessage ? false : true}
             >
-              send
+              전송
             </Button>
           </FormItem>
         </FormWrapper>
@@ -38,20 +40,32 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
     </React.Fragment>
   );
 }
-const FormWrapper = styled.div`
+const FormWrapper = styled.footer`
   display: flex;
-  justify-content: space-between;
+  flex: auto;
+  position: fixed;
+  width: 100vw;
+  bottom: 0;
+  z-index: 99;
+  .ant-form-item {
+    margin: 0px;
+    padding: 0px;
+  }
+  .ant-input {
+    border: none;
+    padding: 20px;
+    width: 90vw;
+  }
+  .ant-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    width: 10vw;
+    background-color: #ffe731;
+    border: none;
+    color: #1a1a1a;
+  }
 `;
 
-const TextField = styled.input`
-  width: 80vw;
-  padding: 10px;
-  border-radius: 10px;
-`;
-const SendButton = styled.button`
-  border-radius: 10px;
-  border: 1px solid gray;
-  background-color: white;
-  padding: 10px;
-`;
 export default ChatInput;

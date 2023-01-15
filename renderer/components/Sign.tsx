@@ -3,7 +3,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { Layout, Form, Select, Button, Input } from "antd";
 import styled from "styled-components";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  browserSessionPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { ipcRenderer } from "electron";
 import store from "store";
 import router, { useRouter } from "next/router";

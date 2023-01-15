@@ -1,38 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
 import { Header } from "antd/lib/layout/layout";
 import Link from "next/link";
-import { RecoilRoot, useRecoilState } from "recoil";
-import firebase from "firebase/app";
+import { RecoilRoot } from "recoil";
 import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
 // import SignOut from "../components/SignOut";
-import { setPersistence } from "firebase/auth";
 import Cookies from "universal-cookie";
-import axios from "axios";
-import { ipcRenderer } from "electron";
-import { userAtom } from "../atoms";
-import type { NextPage } from "next";
-
+import styled from "styled-components";
 // axios.defaults.baseURL = "https://localhost:8888";
 // axios.defaults.withCredentials = true;
 import dynamic from "next/dynamic";
-const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
+import { auth } from "../firebase";
+import Nav from "../components/Header";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const cookies = new Cookies();
-
-  // useEffect(() => {
-  //   const token = cookies.get("chat-access-token");
-  //   if (token) {
-  //     axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-  //   } else {
-
-  //   }
-  // }, []);
 
   return (
     <React.Fragment>
@@ -40,16 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <RecoilRoot children={""}>
-        <Header>
-          <Link href="/room">
-            <a style={{ padding: "0 10px" }}>room</a>
-          </Link>
-          <Link href="/home">
-            <a style={{ padding: "0 10px" }}>home</a>
-          </Link>
-          <SignOut />
-        </Header>
-
+        <Nav />
         <Component {...pageProps} />
       </RecoilRoot>
     </React.Fragment>

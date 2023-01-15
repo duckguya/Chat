@@ -1,9 +1,5 @@
-import { Content } from "antd/lib/layout/layout";
 import { useRecoilState } from "recoil";
-import io from "socket.io-client";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Form, Input } from "antd";
-import FormItem from "antd/es/form/FormItem";
 import styled from "styled-components";
 import Head from "next/head";
 import {
@@ -13,15 +9,12 @@ import {
   limit,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
-import { roomIdAtom, textAtom } from "../../atoms";
 import { auth, dbService } from "../../firebase";
 import Messages from "../../components/Messages";
 import ChatInput from "../../components/ChatInput";
 import router from "next/router";
-
-const socket = io("http://localhost:3000");
+import { roomIdAtom } from "../../atoms";
 
 interface IFormData {
   text: string;
@@ -36,16 +29,13 @@ interface IOldMessage {
 
 export default function Chats() {
   const roomUserId = router.query.params[0] || "";
-  const loginId = auth.currentUser.uid;
-
+  const loginId = auth?.currentUser?.uid || "";
   const [roomType, setRoomType] = useRecoilState(roomIdAtom);
   const [roomId, setRoomId] = useState("");
-  const [inputData, setInputData] = useRecoilState(textAtom);
   const [oldMessages, setOldMessages] = useState<IOldMessage[]>([]);
   // 포커싱과 하단 스크롤을 위한 useRef
   const inputRef = useRef();
   const bottomListRef = useRef();
-
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
   const setTexts = async () => {
@@ -70,7 +60,6 @@ export default function Chats() {
       console.log("error", error);
     }
   };
-
   useEffect(() => {
     // 채팅방id 만들기
     const ids = [loginId, roomUserId];
@@ -78,7 +67,6 @@ export default function Chats() {
     setRoomId(sortedIds);
     setTexts();
   }, []);
-
   //   전송 버튼을 누르고 데이터 저장
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
@@ -90,7 +78,6 @@ export default function Chats() {
           text: values.text,
           rooms: [{ uid: [auth.currentUser.uid, roomUserId] }],
         });
-
         // Clear input field
         setNewMessage("");
         // Scroll down to the bottom of the list
@@ -113,7 +100,6 @@ export default function Chats() {
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </title>
         </Head>
-
         <MessagesWrapper>
           <div>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
@@ -124,7 +110,10 @@ export default function Chats() {
                 first?.createdAt <= second?.createdAt ? -1 : 1
               )
               .map((msg, index) => (
-                <li key={index}>
+                <li
+                  key={index}
+                  style={{ listStyleType: "none", paddingBottom: "10px" }}
+                >
                   <Messages {...msg} />
                 </li>
               ))}
@@ -141,7 +130,7 @@ export default function Chats() {
   );
 }
 const Container = styled.div`
-  height: 90vh;
+  height: 92.2vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -155,6 +144,5 @@ const MessagesWrapper = styled.div`
   /* overflow: scroll; */
 `;
 const InputWrapper = styled.div`
-  background-color: white;
-  border: none;
+  width: 100vw;
 `;
