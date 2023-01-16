@@ -23,13 +23,11 @@ function Home() {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
-      console.log("???", payload);
       if (payload.length > 0) router.push("/room");
     });
   }, []);
 
   const handleModalClick = (type: boolean) => {
-    console.log(type);
     setIsSignUp(type);
     // router.push("/signup");
   };

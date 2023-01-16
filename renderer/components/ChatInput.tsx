@@ -9,16 +9,18 @@ interface IProps {
   newMessage: string;
 }
 function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
+  const fields = [{ name: ["text"], value: newMessage }];
   return (
     <React.Fragment>
       {/* onSubmit={(e) => e.preventDefault()} */}
-      <Form onFinish={onFinished}>
+      <Form onFinish={onFinished} fields={fields}>
         <FormWrapper>
           <FormItem name="text">
             <Input
               className="flex_item1"
               size="large"
-              value={newMessage}
+              name="text"
+              // value={newMessage}
               onChange={handleOnChange}
               placeholder="메시지를 입력하세요."
             />
@@ -30,7 +32,7 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
               size="large"
               type="primary"
               htmlType="submit"
-              disabled={newMessage ? false : true}
+              disabled={!newMessage}
             >
               전송
             </Button>

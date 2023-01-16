@@ -49,37 +49,10 @@ export default function Chats() {
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
 
-  // const setTexts = async () => {
-  //   try {
-  //     const q = query(
-  //       collection(dbService, `messages${roomId}`),
-  //       orderBy("createdAt", "desc"),
-  //       limit(100)
-  //     );
-  //     let msgList = [];
-  //     onSnapshot(q, (querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         const mObj = {
-  //           ...doc.data(),
-  //           id: doc.id,
-  //         };
-  //         msgList.push(mObj);
-  //       });
-  //       setOldMessages(msgList);
-  //       console.log(" ", msgList);
-  //     });
-  //     // const querySnapshot = await getDocs(q);
-  //     // console.log(msgList);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
   //   전송 버튼을 누르고 데이터 저장
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
-      ipcRenderer.send("PROFILE");
-      ipcRenderer.on("PROFILE_UID", (event, loginId) => {
+      if (loginId) {
         const data = {
           createdAt: Date.now(),
           author: loginId,
@@ -87,7 +60,7 @@ export default function Chats() {
           rooms: [{ uid: [loginId, roomUserId] }],
         };
         ipcRenderer.send("SEND_MESSAGE", data, roomId);
-      });
+      }
 
       // Clear input field
       setNewMessage("");
@@ -104,19 +77,19 @@ export default function Chats() {
     } else {
       setRoomUserId(roomUserUid);
       ipcRenderer.send("PROFILE");
-      ipcRenderer.on("PROFILE_UID", (event, payload) => {
-        if (payload !== "") {
-          const ids = [payload, roomUserUid];
+      ipcRenderer.on("PROFILE_UID", (event, loginUid) => {
+        if (loginUid !== "") {
+          const ids = [loginUid, roomUserUid];
           let sortedIds = ids.sort()[0] + ids.sort()[1];
           setRoomId(sortedIds);
-
+          setLoginId(loginUid);
           // 대화내용 가져오기
           ipcRenderer.send("MESSAGES", sortedIds);
           ipcRenderer.on("MESSAGES", (event, payload) => {
-            setOldMessages([...payload]);
+            setOldMessages(payload);
           });
         } else {
-          console.log(payload);
+          console.log("");
         }
       });
     }
@@ -124,6 +97,7 @@ export default function Chats() {
 
   // 채팅 작성했을 때 onChanghandler, onSubmitHandler
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     setNewMessage(e.target.value);
   };
   return (

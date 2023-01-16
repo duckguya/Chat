@@ -137,11 +137,11 @@ ipcMain.on("PROFILE", async (event, payload) => {
       url: "http://localhost:3000/*",
       name: "uid",
     })
-    .then((cookies) => {
+    .then(async (cookies) => {
       if (cookies.length > 0) {
-        event.reply("PROFILE_UID", cookies[0]?.value);
+        await event.reply("PROFILE_UID", cookies[0]?.value);
       } else {
-        event.reply("PROFILE_UID", "");
+        await event.reply("PROFILE_UID", "");
       }
     });
 });
