@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import Cookies from "universal-cookie";
 import { async } from "@firebase/util";
 import {
+  addDoc,
   collection,
   limit,
   onSnapshot,
@@ -186,6 +187,15 @@ ipcMain.on("MESSAGES", (event, roomId) => {
     });
     event.reply("MESSAGES", messageList);
   });
+});
+
+ipcMain.on("SEND_MESSAGE", async (event, payload, roomId) => {
+  console.log("payload", payload);
+  try {
+    await addDoc(collection(dbService, `messages${roomId}`), payload);
+  } catch (error) {
+    console.log("error", error);
+  }
 });
 
 //

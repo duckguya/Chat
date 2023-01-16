@@ -75,6 +75,27 @@ export default function Chats() {
   //   }
   // };
 
+  //   전송 버튼을 누르고 데이터 저장
+  const onFinished = async (values: IFormData) => {
+    if (newMessage) {
+      ipcRenderer.send("PROFILE");
+      ipcRenderer.on("PROFILE_UID", (event, loginId) => {
+        const data = {
+          createdAt: Date.now(),
+          author: loginId,
+          text: values.text,
+          rooms: [{ uid: [loginId, roomUserId] }],
+        };
+        ipcRenderer.send("SEND_MESSAGE", data, roomId);
+      });
+
+      // Clear input field
+      setNewMessage("");
+      // Scroll down to the bottom of the list
+      // bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
     const roomUserUid = localStorage.getItem("roomUserUid");
     // 채팅방id 만들기
@@ -87,6 +108,9 @@ export default function Chats() {
         if (payload !== "") {
           const ids = [payload, roomUserUid];
           let sortedIds = ids.sort()[0] + ids.sort()[1];
+          setRoomId(sortedIds);
+
+          // 대화내용 가져오기
           ipcRenderer.send("MESSAGES", sortedIds);
           ipcRenderer.on("MESSAGES", (event, payload) => {
             setOldMessages([...payload]);
@@ -98,33 +122,8 @@ export default function Chats() {
     }
   }, []);
 
-  //   전송 버튼을 누르고 데이터 저장
-  const onFinished = async (values: IFormData) => {
-    if (newMessage) {
-      try {
-        ipcRenderer.send("PROFILE");
-        ipcRenderer.on("PROFILE_UID", (event, payload) => {
-          setUid(payload);
-        });
-        // Add new message in Firestore
-        await addDoc(collection(dbService, `messages${roomId}`), {
-          createdAt: Date.now(),
-          author: loginId,
-          text: values.text,
-          rooms: [{ uid: [uid, roomUserId] }],
-        });
-        // Clear input field
-        setNewMessage("");
-        // Scroll down to the bottom of the list
-        // bottomListRef.current.scrollIntoView({ behavior: "smooth" });
-      } catch (error) {
-        console.log("error", error);
-      }
-    }
-  };
   // 채팅 작성했을 때 onChanghandler, onSubmitHandler
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setNewMessage(e.target.value);
   };
   return (
