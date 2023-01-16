@@ -13,7 +13,11 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { dbService } from "./firebase";
+import { auth, dbService } from "./firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 // import {
 // createUserWithEmailAndPassword,
@@ -70,23 +74,61 @@ if (isProd) {
   }
 })();
 
-ipcMain.on("SIGN_UP", (event, payload) => {});
+ipcMain.on("SIGN_UP", async (event, payload) => {
+  const newUser = await createUserWithEmailAndPassword(
+    auth,
+    payload?.email,
+    payload?.password
+  );
+  await addDoc(collection(dbService, "users"), {
+    email: newUser?.user?.email,
+    createdAt: Date.now(),
+    uid: newUser?.user?.uid,
+  });
+  auth.currentUser.getIdToken().then(async function (idToken) {
+    await session.defaultSession.cookies
+      .set({
+        url: "http://localhost:3000/*",
+        name: "token",
+        value: idToken,
+        httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
+        // expirationDate: 10,
+      })
+      .then(() => {});
+    await session.defaultSession.cookies
+      .set({
+        url: "http://localhost:3000/*",
+        name: "uid",
+        value: newUser?.user?.uid,
+      })
+      .then(() => {
+        event.reply("TOKEN", true);
+      });
+  });
+});
 
-ipcMain.on("SIGN_IN", async (event, { idToken, uid }) => {
-  await session.defaultSession.cookies
-    .set({
-      url: "http://localhost:3000/*",
-      name: "token",
-      value: idToken,
-      httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
-      // expirationDate: 10,
-    })
-    .then(() => {});
-  await session.defaultSession.cookies
-    .set({ url: "http://localhost:3000/*", name: "uid", value: uid })
-    .then(() => {
-      event.reply("TOKEN", true);
-    });
+ipcMain.on("SIGN_IN", async (event, payload) => {
+  await signInWithEmailAndPassword(auth, payload.email, payload.password);
+  auth.currentUser.getIdToken().then(async function (idToken) {
+    await session.defaultSession.cookies
+      .set({
+        url: "http://localhost:3000/*",
+        name: "token",
+        value: idToken,
+        httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
+        // expirationDate: 10,
+      })
+      .then(() => {});
+    await session.defaultSession.cookies
+      .set({
+        url: "http://localhost:3000/*",
+        name: "uid",
+        value: auth.currentUser.uid,
+      })
+      .then(() => {
+        event.reply("TOKEN", true);
+      });
+  });
 });
 
 ipcMain.on("PROFILE", async (event, payload) => {
@@ -96,9 +138,7 @@ ipcMain.on("PROFILE", async (event, payload) => {
       name: "uid",
     })
     .then((cookies) => {
-      console.log("cookies", cookies);
       if (cookies.length > 0) {
-        console.log("cookies[0]?.value", cookies[0]?.value);
         event.reply("PROFILE_UID", cookies[0]?.value);
       } else {
         event.reply("PROFILE_UID", "");
@@ -124,7 +164,7 @@ ipcMain.on("CONNECTION", async (event, payload) => {
             event.reply("CONNECTION", cookies[0]?.value);
           });
       } else {
-        event.reply("CONNECTION", []);
+        event.reply("CONNECTION", "");
       }
     });
   // console.log("payload.token", payload.token);
@@ -155,7 +195,6 @@ ipcMain.on("USER_LIST", async (event, payload) => {
     .then((cookies) => {
       const uid = cookies[0]?.value;
       const q = query(collection(dbService, "users"), where("uid", "!=", uid));
-      console.log("userId", uid);
       onSnapshot(q, (querySnapshot) => {
         let userData = [];
         querySnapshot.forEach((doc) => {
@@ -190,7 +229,6 @@ ipcMain.on("MESSAGES", (event, roomId) => {
 });
 
 ipcMain.on("SEND_MESSAGE", async (event, payload, roomId) => {
-  console.log("payload", payload);
   try {
     await addDoc(collection(dbService, `messages${roomId}`), payload);
   } catch (error) {

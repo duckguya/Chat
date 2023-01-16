@@ -11,13 +11,12 @@ import { useRouter } from "next/router";
 const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
 function Nav() {
-  const cookies = new Cookies();
-  const [token, setToken] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
       if (payload.length > 0) {
-        setToken(true);
+        setIsVisible(true);
       }
     });
   }, []);
@@ -25,7 +24,7 @@ function Nav() {
   return (
     <React.Fragment>
       <Header>
-        {token && (
+        {isVisible && (
           <>
             <Link href="/room">
               <a style={{ padding: "0 10px" }}>room</a>

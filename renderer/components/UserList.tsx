@@ -55,7 +55,6 @@ const UserList = () => {
       setUserList([...payload]);
     });
   }, []);
-  console.log("@@@@", userList);
 
   // const getUsers = async () => {
   //   ipcRenderer.send("PROFILE");
@@ -131,19 +130,16 @@ const UserList = () => {
 
         {userList &&
           userList.map((data, index) => (
-            <>
-              {console.log("data!!", data)}
-              <Button
-                block
-                key={index}
-                style={{
-                  margin: "10px",
-                }}
-                onClick={() => onClicked({ type: data.email, uid: data.uid })}
-              >
-                {data.email}
-              </Button>
-            </>
+            <Button
+              block
+              key={index}
+              style={{
+                margin: "10px",
+              }}
+              onClick={() => onClicked({ type: data.email, uid: data.uid })}
+            >
+              {data.email}
+            </Button>
           ))}
       </Container>
     </React.Fragment>

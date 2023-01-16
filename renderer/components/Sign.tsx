@@ -55,16 +55,22 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
       } else {
         // 로그인이라면
         try {
-          await signInWithEmailAndPassword(auth, values.email, values.password);
-          // const cookies = new Cookies();
-          auth.currentUser.getIdToken().then(function (idToken) {
-            ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
-            ipcRenderer.on("TOKEN", (evnet, payload) => {
-              if (payload) {
-                router.push("/room");
-              }
-            });
+          ipcRenderer.send("SIGN_IN", values);
+          ipcRenderer.on("TOKEN", (evnet, payload) => {
+            if (payload) {
+              router.push("/room");
+            }
           });
+          // await signInWithEmailAndPassword(auth, values.email, values.password);
+          // const cookies = new Cookies();
+          // auth.currentUser.getIdToken().then(function (idToken) {
+          //   ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
+          //   ipcRenderer.on("TOKEN", (evnet, payload) => {
+          //     if (payload) {
+          //       router.push("/room");
+          //     }
+          //   });
+          // });
         } catch (error) {
           setIsLogin(false);
           console.log(error);

@@ -36,23 +36,29 @@ function Home() {
 
   const handleSubmit = async (values: IFormData) => {
     try {
-      const newUser = await createUserWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      await addDoc(collection(dbService, "users"), {
-        email: values.email,
-        createdAt: Date.now(),
-        uid: newUser.user.uid,
-      });
-      auth.currentUser.getIdToken().then(function (idToken) {
-        ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
-        ipcRenderer.on("TOKEN", (evnet, payload) => {
-          if (payload) {
-            router.push("/room");
-          }
-        });
+      ipcRenderer.send("SIGN_UP", values);
+      // const newUser = await createUserWithEmailAndPassword(
+      //   auth,
+      //   values.email,
+      //   values.password
+      // );
+      // await addDoc(collection(dbService, "users"), {
+      //   email: values.email,
+      //   createdAt: Date.now(),
+      //   uid: newUser.user.uid,
+      // });
+      // auth.currentUser.getIdToken().then(function (idToken) {
+      //   ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
+      //   ipcRenderer.on("TOKEN", (evnet, payload) => {
+      //     if (payload) {
+      //       router.push("/room");
+      //     }
+      //   });
+      // });
+      ipcRenderer.on("TOKEN", (evnet, payload) => {
+        if (payload) {
+          router.push("/room");
+        }
       });
       // showModal();
     } catch (error) {
