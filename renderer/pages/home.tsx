@@ -48,7 +48,7 @@ function Home() {
       });
       auth.currentUser.getIdToken().then(function (idToken) {
         ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
-        ipcRenderer.on("SIGN_IN", (evnet, payload) => {
+        ipcRenderer.on("TOKEN", (evnet, payload) => {
           if (payload) {
             router.push("/room");
           }

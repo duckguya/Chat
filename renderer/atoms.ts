@@ -8,6 +8,6 @@ interface IData {
 }
 
 export const roomIdAtom = atom({
-  key: "roomIdAtom",
+  key: "roomId",
   default: "",
 });

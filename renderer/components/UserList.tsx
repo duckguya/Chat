@@ -40,9 +40,7 @@ const UserList = () => {
   const getUsers = async () => {
     ipcRenderer.send("PROFILE");
     ipcRenderer.on("PROFILE", (evnet, payload) => {
-      console.log("userList payload", payload);
       if (payload !== "") {
-        console.log("ooddoo");
         setUid(payload);
       }
     });
@@ -68,7 +66,6 @@ const UserList = () => {
         console.log(error);
       }
     } else {
-      console.log("?");
       // router.push("/");
     }
   };
@@ -79,7 +76,6 @@ const UserList = () => {
       if (isUser) {
         getUsers();
       } else {
-        console.log("userlist  fail");
         router.push("/");
       }
     });

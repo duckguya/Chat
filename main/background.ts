@@ -62,8 +62,8 @@ if (isProd) {
 
 ipcMain.on("SIGN_UP", (event, payload) => {});
 
-ipcMain.on("SIGN_IN", (event, { idToken, uid }) => {
-  session.defaultSession.cookies
+ipcMain.on("SIGN_IN", async (event, { idToken, uid }) => {
+  await session.defaultSession.cookies
     .set({
       url: "http://localhost:3000/*",
       name: "token",
@@ -72,15 +72,15 @@ ipcMain.on("SIGN_IN", (event, { idToken, uid }) => {
       // expirationDate: 10,
     })
     .then(() => {});
-  session.defaultSession.cookies
+  await session.defaultSession.cookies
     .set({ url: "http://localhost:3000/*", name: "uid", value: uid })
     .then(() => {
       event.reply("TOKEN", true);
     });
 });
 
-ipcMain.on("PROFILE", (event, payload) => {
-  session.defaultSession.cookies
+ipcMain.on("PROFILE", async (event, payload) => {
+  await session.defaultSession.cookies
     .get({
       url: "http://localhost:3000/*",
       name: "uid",
@@ -98,7 +98,7 @@ ipcMain.on("PROFILE", (event, payload) => {
 
 ipcMain.on("CONNECTION", async (event, payload) => {
   // const isLogin = cookies.verify(payload.token.accessToken).ok;
-  session.defaultSession.cookies
+  await session.defaultSession.cookies
     .get({
       url: "http://localhost:3000/*",
       name: "token",
@@ -119,7 +119,7 @@ ipcMain.on("CONNECTION", async (event, payload) => {
 });
 
 ipcMain.on("REMOVE_TOKEN", async (event, payload) => {
-  session.defaultSession
+  await session.defaultSession
     .clearStorageData({ storages: ["cookies"] })
     .then(() => {
       event.reply("REMOVE_TOKEN", true);
