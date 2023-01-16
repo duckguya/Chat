@@ -23,8 +23,8 @@ function Home() {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
-      console.log("?");
-      if (payload) router.push("/room");
+      console.log("???", payload);
+      if (payload.length > 0) router.push("/room");
     });
   }, []);
 

@@ -39,7 +39,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (event, payload) => {
-      if (payload) {
+      if (payload.length > 0) {
         router.push("/room");
       }
     });

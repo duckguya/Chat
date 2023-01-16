@@ -19,7 +19,8 @@ const SignOut = () => {
       // await auth.signOut();
       ipcRenderer.send("REMOVE_TOKEN");
       ipcRenderer.on("REMOVE_TOKEN", (event, payload) => {
-        if (payload) {
+        console.log(payload.length);
+        if (payload.length == 0 || !payload) {
           router.push("/");
         }
       });

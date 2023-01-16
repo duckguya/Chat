@@ -4,6 +4,15 @@ import { createWindow } from "./helpers";
 import { Server } from "socket.io";
 import Cookies from "universal-cookie";
 import { async } from "@firebase/util";
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { dbService } from "./firebase";
 
 // import {
 // createUserWithEmailAndPassword,
@@ -47,8 +56,8 @@ if (isProd) {
   await app.whenReady();
 
   const mainWindow = createWindow("main", {
-    width: 1000,
-    height: 750,
+    width: 523,
+    height: 720,
   });
 
   if (isProd) {
@@ -89,9 +98,9 @@ ipcMain.on("PROFILE", async (event, payload) => {
       console.log("cookies", cookies);
       if (cookies.length > 0) {
         console.log("cookies[0]?.value", cookies[0]?.value);
-        event.reply("PROFILE", cookies[0]?.value);
+        event.reply("PROFILE_UID", cookies[0]?.value);
       } else {
-        event.reply("PROFILE", "");
+        event.reply("PROFILE_UID", "");
       }
     });
 });
@@ -103,11 +112,18 @@ ipcMain.on("CONNECTION", async (event, payload) => {
       url: "http://localhost:3000/*",
       name: "token",
     })
-    .then((cookies) => {
+    .then(async (cookies) => {
       if (cookies.length > 0) {
-        event.reply("CONNECTION", true);
+        await session.defaultSession.cookies
+          .get({
+            url: "http://localhost:3000/*",
+            name: "uid",
+          })
+          .then((cookies) => {
+            event.reply("CONNECTION", cookies[0]?.value);
+          });
       } else {
-        event.reply("CONNECTION", false);
+        event.reply("CONNECTION", []);
       }
     });
   // console.log("payload.token", payload.token);
@@ -129,7 +145,50 @@ ipcMain.on("REMOVE_TOKEN", async (event, payload) => {
     });
 });
 
-ipcMain.on("REQ_USER_LIST", async (event, payload) => {});
+ipcMain.on("USER_LIST", async (event, payload) => {
+  await session.defaultSession.cookies
+    .get({
+      url: "http://localhost:3000/*",
+      name: "uid",
+    })
+    .then((cookies) => {
+      const uid = cookies[0]?.value;
+      const q = query(collection(dbService, "users"), where("uid", "!=", uid));
+      console.log("userId", uid);
+      onSnapshot(q, (querySnapshot) => {
+        let userData = [];
+        querySnapshot.forEach((doc) => {
+          const userObj = {
+            ...doc.data(),
+            id: doc.id,
+          };
+          userData.push(userObj);
+        });
+        event.reply("USER_LIST", userData);
+      });
+    });
+});
+
+ipcMain.on("MESSAGES", (event, roomId) => {
+  const q = query(
+    collection(dbService, `messages${roomId}`),
+    orderBy("createdAt", "desc"),
+    limit(100)
+  );
+  let messageList = [];
+  onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const mObj = {
+        ...doc.data(),
+        id: doc.id,
+      };
+      messageList.push(mObj);
+    });
+    event.reply("MESSAGES", messageList);
+  });
+});
+
+//
 app.on("window-all-closed", () => {
   app.quit();
 });

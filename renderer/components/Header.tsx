@@ -16,7 +16,7 @@ function Nav() {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
-      if (payload) {
+      if (payload.length > 0) {
         setToken(true);
       }
     });

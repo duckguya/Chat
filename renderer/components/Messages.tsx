@@ -15,7 +15,7 @@ function Messages(data: IProps) {
 
   useEffect(() => {
     ipcRenderer.send("PROFILE");
-    ipcRenderer.on("PROFILE", (event, payload) => {
+    ipcRenderer.on("PROFILE_UID", (event, payload) => {
       setLoginUid(payload);
     });
     const date = new Date(data.createdAt).toISOString().split("T")[0];

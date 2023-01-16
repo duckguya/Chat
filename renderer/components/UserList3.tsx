@@ -41,21 +41,14 @@ interface IProps {
   users: UserList[];
 }
 
-const UserList = () => {
+const UserList2 = (props) => {
+  const { data } = props;
+  console.log(props);
+  console.log(data);
   // const [users, setUsers] = useState(datas);
-
   const [uid, setUid] = useState("false");
   const setRoomId = useSetRecoilState(roomIdAtom);
   const router = useRouter();
-  const [userList, setUserList] = useState([]);
-
-  useEffect(() => {
-    ipcRenderer.send("USER_LIST");
-    ipcRenderer.on("USER_LIST", (event, payload) => {
-      setUserList([...payload]);
-    });
-  }, []);
-  console.log("@@@@", userList);
 
   // const getUsers = async () => {
   //   ipcRenderer.send("PROFILE");
@@ -129,8 +122,8 @@ const UserList = () => {
         </Head>
         <Button onClick={() => onClicked({ type: "group" })}>그룹채팅</Button>
 
-        {userList &&
-          userList.map((data, index) => (
+        {/* {users &&
+          users.map((data, index) => (
             <>
               {console.log("data!!", data)}
               <Button
@@ -144,7 +137,7 @@ const UserList = () => {
                 {data.email}
               </Button>
             </>
-          ))}
+          ))} */}
       </Container>
     </React.Fragment>
   );
@@ -156,4 +149,4 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-export default UserList;
+export default UserList2;

@@ -49,31 +49,32 @@ export default function Chats() {
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
 
-  const setTexts = async () => {
-    try {
-      const q = query(
-        collection(dbService, `messages${roomId}`),
-        orderBy("createdAt", "desc"),
-        limit(100)
-      );
-      let msgList = [];
-      onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const mObj = {
-            ...doc.data(),
-            id: doc.id,
-          };
-          msgList.push(mObj);
-        });
-        setOldMessages(msgList);
-        console.log(" ", msgList);
-      });
-      // const querySnapshot = await getDocs(q);
-      // console.log(msgList);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+  // const setTexts = async () => {
+  //   try {
+  //     const q = query(
+  //       collection(dbService, `messages${roomId}`),
+  //       orderBy("createdAt", "desc"),
+  //       limit(100)
+  //     );
+  //     let msgList = [];
+  //     onSnapshot(q, (querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         const mObj = {
+  //           ...doc.data(),
+  //           id: doc.id,
+  //         };
+  //         msgList.push(mObj);
+  //       });
+  //       setOldMessages(msgList);
+  //       console.log(" ", msgList);
+  //     });
+  //     // const querySnapshot = await getDocs(q);
+  //     // console.log(msgList);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
+
   useEffect(() => {
     const roomUserUid = localStorage.getItem("roomUserUid");
     // 채팅방id 만들기
@@ -82,13 +83,14 @@ export default function Chats() {
     } else {
       setRoomUserId(roomUserUid);
       ipcRenderer.send("PROFILE");
-      ipcRenderer.on("PROFILE", (event, payload) => {
+      ipcRenderer.on("PROFILE_UID", (event, payload) => {
         if (payload !== "") {
           const ids = [payload, roomUserUid];
           let sortedIds = ids.sort()[0] + ids.sort()[1];
-          console.log("sortedIds", sortedIds);
-          setRoomId(sortedIds);
-          setTexts();
+          ipcRenderer.send("MESSAGES", sortedIds);
+          ipcRenderer.on("MESSAGES", (event, payload) => {
+            setOldMessages([...payload]);
+          });
         } else {
           console.log(payload);
         }
@@ -101,7 +103,7 @@ export default function Chats() {
     if (newMessage) {
       try {
         ipcRenderer.send("PROFILE");
-        ipcRenderer.on("PROFILE", (event, payload) => {
+        ipcRenderer.on("PROFILE_UID", (event, payload) => {
           setUid(payload);
         });
         // Add new message in Firestore
