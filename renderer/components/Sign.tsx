@@ -15,7 +15,6 @@ import router, { useRouter } from "next/router";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import { userAtom } from "../atoms";
 import { auth } from "../firebase";
 
 const { Header, Content } = Layout;
@@ -38,8 +37,9 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [isLogin, setIsLogin] = useState(true);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
+    ipcRenderer.send("CONNECTION");
+    ipcRenderer.on("CONNECTION", (event, payload) => {
+      if (payload) {
         router.push("/room");
       }
     });
@@ -60,6 +60,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
           auth.currentUser.getIdToken().then(function (idToken) {
             ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
             ipcRenderer.on("SIGN_IN", (evnet, payload) => {
+              console.log("p", payload);
               if (payload) {
                 router.push("/room");
               }

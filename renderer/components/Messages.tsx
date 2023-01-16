@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth } from "../firebase";
@@ -10,17 +11,23 @@ interface IProps {
 }
 function Messages(data: IProps) {
   const [textTime, setTextTime] = useState("");
+  const [loginUid, setLoginUid] = useState("");
 
   useEffect(() => {
+    ipcRenderer.send("PROFILE");
+    ipcRenderer.on("PROFILE", (event, payload) => {
+      setLoginUid(payload);
+    });
     const date = new Date(data.createdAt).toISOString().split("T")[0];
     const time = new Date(data.createdAt).toTimeString().split(" ")[0];
     setTextTime(date + " " + time);
   }, []);
+  console.log("in Messages");
 
   return (
     <React.Fragment>
       <Container>
-        {data.author !== auth.currentUser.uid ? (
+        {data.author !== loginUid ? (
           <>
             <TheOtherPersonText>{data.text}</TheOtherPersonText>
             <TimeText>{textTime}</TimeText>

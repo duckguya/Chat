@@ -26,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
       if (!payload) {
+        console.log("여기 들어옴?");
         router.push("/");
       }
     });

@@ -15,6 +15,7 @@ function Home() {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
+      console.log("?");
       if (payload) router.push("/room");
     });
   }, []);

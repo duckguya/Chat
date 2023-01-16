@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { userAtom } from "../atoms";
 import { auth } from "../firebase";
 import Cookies from "universal-cookie";
 import { ipcRenderer } from "electron";
@@ -17,12 +16,10 @@ function Nav() {
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
-      console.log("payload", payload);
       if (payload) {
         setToken(true);
       }
     });
-    console.log(token);
   }, []);
 
   return (

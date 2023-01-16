@@ -7,7 +7,6 @@ import { signOut } from "firebase/auth";
 import router from "next/router";
 import Cookies from "universal-cookie";
 import { useRecoilState } from "recoil";
-import { userAtom } from "../atoms";
 import { auth } from "../firebase";
 import { ipcRenderer } from "electron";
 

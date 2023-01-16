@@ -71,12 +71,12 @@ ipcMain.on("SIGN_IN", (event, { idToken, uid }) => {
       httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
       // expirationDate: 10,
     })
+    .then(() => {});
+  session.defaultSession.cookies
+    .set({ url: "http://localhost:3000/*", name: "uid", value: uid })
     .then(() => {
       event.reply("TOKEN", true);
     });
-  session.defaultSession.cookies
-    .set({ url: "http://localhost:3000/*", name: "uid", value: uid })
-    .then(() => {});
 });
 
 ipcMain.on("PROFILE", (event, payload) => {
@@ -86,10 +86,12 @@ ipcMain.on("PROFILE", (event, payload) => {
       name: "uid",
     })
     .then((cookies) => {
+      console.log("cookies", cookies);
       if (cookies.length > 0) {
+        console.log("cookies[0]?.value", cookies[0]?.value);
         event.reply("PROFILE", cookies[0]?.value);
       } else {
-        event.reply("PROFILE", "false");
+        event.reply("PROFILE", "");
       }
     });
 });

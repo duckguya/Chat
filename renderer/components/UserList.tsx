@@ -1,6 +1,13 @@
 import { Content } from "antd/lib/layout/layout";
 import Title from "antd/lib/skeleton/Title";
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "antd";
@@ -32,43 +39,50 @@ const UserList = () => {
 
   const getUsers = async () => {
     ipcRenderer.send("PROFILE");
-    console.log(1);
     ipcRenderer.on("PROFILE", (evnet, payload) => {
-      console.log(2);
-      console.log("????", payload);
-      if (payload) {
+      console.log("userList payload", payload);
+      if (payload !== "") {
+        console.log("ooddoo");
         setUid(payload);
       }
     });
 
     if (uid !== "false") {
       try {
-        setUsers([]);
         const q = query(
           collection(dbService, "users"),
           where("uid", "!=", uid)
         );
-        const querySnapshot = await getDocs(q);
-        let userData = [];
-        querySnapshot.forEach((doc) => {
-          const userObj = {
-            ...doc.data(),
-            id: doc.id,
-          };
-          userData.push(userObj);
+        onSnapshot(q, (querySnapshot) => {
+          let userData = [];
+          querySnapshot.forEach((doc) => {
+            const userObj = {
+              ...doc.data(),
+              id: doc.id,
+            };
+            userData.push(userObj);
+          });
+          setUsers(userData);
         });
-        setUsers(userData);
       } catch (error) {
         console.log(error);
       }
     } else {
-      router.push("/");
+      console.log("?");
+      // router.push("/");
     }
   };
 
   useEffect(() => {
-    console.log("anjsi");
-    getUsers();
+    ipcRenderer.send("CONNECTION");
+    ipcRenderer.on("CONNECTION", (event, isUser) => {
+      if (isUser) {
+        getUsers();
+      } else {
+        console.log("userlist  fail");
+        router.push("/");
+      }
+    });
   }, []);
 
   interface onClickedData {
@@ -77,6 +91,8 @@ const UserList = () => {
   }
   const onClicked = ({ type, uid }: onClickedData) => {
     setRoomId(type);
+    localStorage.removeItem("roomUserUid");
+    localStorage.setItem("roomUserUid", uid);
     router.push(`/chats/${uid}`);
   };
 

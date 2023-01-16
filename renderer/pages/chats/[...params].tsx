@@ -5,16 +5,24 @@ import Head from "next/head";
 import {
   addDoc,
   collection,
-  getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
 import { auth, dbService } from "../../firebase";
-import Messages from "../../components/Messages";
-import ChatInput from "../../components/ChatInput";
+// import Messages from "../../components/Messages";
+// import ChatInput from "../../components/ChatInput";
 import router from "next/router";
 import { roomIdAtom } from "../../atoms";
+import { ipcRenderer } from "electron";
+import dynamic from "next/dynamic";
+const Messages = dynamic(() => import("../../components/Messages"), {
+  ssr: false,
+});
+const ChatInput = dynamic(() => import("../../components/ChatInput"), {
+  ssr: false,
+});
 
 interface IFormData {
   text: string;
@@ -28,16 +36,19 @@ interface IOldMessage {
 }
 
 export default function Chats() {
-  const roomUserId = router.query.params[0] || "";
-  const loginId = auth?.currentUser?.uid || "";
+  const [roomUserId, setRoomUserId] = useState("");
+  const [loginId, setLoginId] = useState("");
+
   const [roomType, setRoomType] = useRecoilState(roomIdAtom);
   const [roomId, setRoomId] = useState("");
   const [oldMessages, setOldMessages] = useState<IOldMessage[]>([]);
+  const [uid, setUid] = useState("");
   // 포커싱과 하단 스크롤을 위한 useRef
   const inputRef = useRef();
   const bottomListRef = useRef();
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
+
   const setTexts = async () => {
     try {
       const q = query(
@@ -46,37 +57,59 @@ export default function Chats() {
         limit(100)
       );
       let msgList = [];
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        const mObj = {
-          ...doc.data(),
-          id: doc.id,
-        };
-        msgList.push(mObj);
+      onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const mObj = {
+            ...doc.data(),
+            id: doc.id,
+          };
+          msgList.push(mObj);
+        });
+        setOldMessages(msgList);
+        console.log(" ", msgList);
       });
-      console.log(msgList);
-      setOldMessages(msgList);
+      // const querySnapshot = await getDocs(q);
+      // console.log(msgList);
     } catch (error) {
       console.log("error", error);
     }
   };
   useEffect(() => {
+    const roomUserUid = localStorage.getItem("roomUserUid");
     // 채팅방id 만들기
-    const ids = [loginId, roomUserId];
-    let sortedIds = ids.sort()[0] + ids.sort()[1];
-    setRoomId(sortedIds);
-    setTexts();
+    if (!roomUserUid) {
+      router.push("/room");
+    } else {
+      setRoomUserId(roomUserUid);
+      ipcRenderer.send("PROFILE");
+      ipcRenderer.on("PROFILE", (event, payload) => {
+        if (payload !== "") {
+          const ids = [payload, roomUserUid];
+          let sortedIds = ids.sort()[0] + ids.sort()[1];
+          console.log("sortedIds", sortedIds);
+          setRoomId(sortedIds);
+          setTexts();
+        } else {
+          console.log(payload);
+        }
+      });
+    }
   }, []);
+
   //   전송 버튼을 누르고 데이터 저장
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
       try {
+        ipcRenderer.send("PROFILE");
+        ipcRenderer.on("PROFILE", (event, payload) => {
+          setUid(payload);
+        });
         // Add new message in Firestore
         await addDoc(collection(dbService, `messages${roomId}`), {
           createdAt: Date.now(),
           author: loginId,
           text: values.text,
-          rooms: [{ uid: [auth.currentUser.uid, roomUserId] }],
+          rooms: [{ uid: [uid, roomUserId] }],
         });
         // Clear input field
         setNewMessage("");
