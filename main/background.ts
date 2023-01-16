@@ -3,6 +3,7 @@ import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import { Server } from "socket.io";
 import Cookies from "universal-cookie";
+import { async } from "@firebase/util";
 
 // import {
 // createUserWithEmailAndPassword,
@@ -113,6 +114,17 @@ ipcMain.on("CONNECTION", async (event, payload) => {
   // } else {
   //   event.reply("LOGIN_CONNECTION", false);
   // }
+});
+
+ipcMain.on("REMOVE_TOKEN", async (event, payload) => {
+  session.defaultSession
+    .clearStorageData({ storages: ["cookies"] })
+    .then(() => {
+      event.reply("REMOVE_TOKEN", true);
+    })
+    .catch((error) => {
+      event.reply("REMOVE_TOKEN", false);
+    });
 });
 
 ipcMain.on("REQ_USER_LIST", async (event, payload) => {});

@@ -9,6 +9,7 @@ import Cookies from "universal-cookie";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms";
 import { auth } from "../firebase";
+import { ipcRenderer } from "electron";
 
 const SignOut = () => {
   const cookies = new Cookies();
@@ -16,8 +17,13 @@ const SignOut = () => {
   const onClicked = async () => {
     try {
       // cookies.remove("chat-access-token", { path: "/" });
-      await auth.signOut();
-      router.push("/");
+      // await auth.signOut();
+      ipcRenderer.send("REMOVE_TOKEN");
+      ipcRenderer.on("REMOVE_TOKEN", (event, payload) => {
+        if (payload) {
+          router.push("/");
+        }
+      });
     } catch (error) {
       console.log("error", error);
     }
