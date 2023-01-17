@@ -25,9 +25,7 @@ function Room() {
       {/* <Head> */}
       {/* <title>room</title> */}
       {/* </Head> */}
-      <Content>
-        <UserList />
-      </Content>
+      <UserList />
     </React.Fragment>
   );
 }

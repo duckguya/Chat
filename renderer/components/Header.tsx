@@ -15,18 +15,20 @@ interface IProps {
   isLogin: boolean;
 }
 function Nav() {
-  const [isVisible, setIsVisible] = useState(false);
-  const isLogin = useRecoilValue(isLoginAtom);
+  // const [isVisible, setIsVisible] = useState(false);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
-  // useEffect(() => {
-  //   console.log("header!");
-  //   ipcRenderer.send("CONNECTION");
-  //   ipcRenderer.on("CONNECTION", (evnet, payload) => {
-  //     if (payload.length > 0) {
-  //       setIsVisible(true);
-  //     }
-  //   });
-  // }, [isLogin]);
+  useEffect(() => {
+    console.log("header!");
+    ipcRenderer.send("CONNECTION");
+    ipcRenderer.on("CONNECTION", (evnet, payload) => {
+      if (payload.length > 0) {
+        setIsLogin(true);
+      } else {
+        setIsLogin(false);
+      }
+    });
+  }, [isLogin]);
 
   return (
     <React.Fragment>

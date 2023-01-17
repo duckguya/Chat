@@ -7,6 +7,8 @@ import { roomIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 interface UserList {
   uid: string;
@@ -48,7 +50,14 @@ const UserList = () => {
         <Head children={""}>
           <title>유저 리스트</title>
         </Head>
-        <Button onClick={() => onClicked({ type: "group" })}>그룹채팅</Button>
+        <Button onClick={() => onClicked({ type: "group" })}>
+          <span>그룹채팅</span>
+          <FontAwesomeIcon
+            icon={faArrowRightToBracket}
+            color={"#88aab1"}
+            size="1x"
+          />
+        </Button>
 
         {userList &&
           userList.map((data, index) => (
@@ -57,7 +66,12 @@ const UserList = () => {
               key={index}
               onClick={() => onClicked({ type: data.email, uid: data.uid })}
             >
-              {data.email}
+              <span>{data.email}</span>
+              <FontAwesomeIcon
+                icon={faArrowRightToBracket}
+                color={"#88aab1"}
+                size="1x"
+              />
             </Button>
           ))}
       </Container>
@@ -72,16 +86,16 @@ const Container = styled.div`
   align-items: center;
   padding-top: 30px;
   .ant-btn {
-    max-width: 50%;
+    width: 300px;
     margin: 10px;
-    padding: 20px;
+    padding: 20px 15px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     border-radius: 10px;
     &:hover {
-      border-color: #ffd220;
-      color: #ffd220;
+      border-color: #88aab1;
+      color: #88aab1;
     }
   }
 `;
