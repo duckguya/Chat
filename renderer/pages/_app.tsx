@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
@@ -71,12 +71,16 @@ a{
 `;
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
       if (payload.length == 0) {
+        setIsLogin(false);
         router.push("/");
+      } else {
+        setIsLogin(true);
       }
     });
   }, []);
@@ -87,7 +91,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <RecoilRoot children={""}>
         <GlobalStyle />
-        <Nav />
+        <Nav isLogin={isLogin} />
         <div style={{ paddingTop: "90px" }}>
           <Component {...pageProps} />
         </div>

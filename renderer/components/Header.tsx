@@ -9,7 +9,7 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
-function Nav() {
+function Nav(isLogin: boolean) {
   const [isVisible, setIsVisible] = useState(true);
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
@@ -18,7 +18,7 @@ function Nav() {
         setIsVisible(true);
       }
     });
-  }, []);
+  }, [isLogin]);
 
   return (
     <React.Fragment>

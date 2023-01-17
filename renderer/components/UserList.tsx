@@ -71,6 +71,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   .ant-btn {
+    max-width: 50%;
     margin: 10px;
     padding: 20px;
     display: flex;
