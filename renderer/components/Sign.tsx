@@ -16,6 +16,7 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { auth } from "../firebase";
+import { isLoginAtom } from "../atoms";
 
 const { Header, Content } = Layout;
 const { Item: FormItem } = Form;
@@ -34,7 +35,7 @@ interface IProps {
 const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [password, setPassword] = useState("");
   const [passCheck, setPassCheck] = useState(true);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
@@ -56,21 +57,12 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         // 로그인이라면
         try {
           ipcRenderer.send("SIGN_IN", values);
+          setIsLogin(true);
           ipcRenderer.on("TOKEN", (evnet, payload) => {
             if (payload) {
               router.push("/room");
             }
           });
-          // await signInWithEmailAndPassword(auth, values.email, values.password);
-          // const cookies = new Cookies();
-          // auth.currentUser.getIdToken().then(function (idToken) {
-          //   ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
-          //   ipcRenderer.on("TOKEN", (evnet, payload) => {
-          //     if (payload) {
-          //       router.push("/room");
-          //     }
-          //   });
-          // });
         } catch (error) {
           setIsLogin(false);
           console.log(error);

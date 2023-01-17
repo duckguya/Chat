@@ -11,3 +11,8 @@ export const roomIdAtom = atom({
   key: "roomId",
   default: "",
 });
+
+export const isLoginAtom = atom({
+  key: "isLogin",
+  default: false,
+});

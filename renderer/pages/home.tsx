@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { ipcRenderer } from "electron";
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { isLoginAtom } from "../atoms";
 
 const Sign = dynamic(() => import("../components/Sign"), { ssr: false });
 interface IFormData {
@@ -15,6 +17,7 @@ interface IFormData {
 function Home() {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
@@ -33,6 +36,7 @@ function Home() {
       ipcRenderer.send("SIGN_UP", values);
       ipcRenderer.on("TOKEN", (evnet, payload) => {
         if (payload) {
+          setIsLogin(true);
           router.push("/room");
         }
       });

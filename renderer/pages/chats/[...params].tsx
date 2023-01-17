@@ -38,8 +38,7 @@ export default function Chats() {
   const [roomId, setRoomId] = useState("");
   const [oldMessages, setOldMessages] = useState<IOldMessage[]>([]);
   const [uid, setUid] = useState("");
-  // 포커싱과 하단 스크롤을 위한 useRef
-  const inputRef = useRef();
+
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
 
@@ -115,10 +114,11 @@ export default function Chats() {
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </title>
         </Head>
+
         <MessagesWrapper>
-          <div>
+          <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
-          </div>
+          </Title>
 
           {oldMessages &&
             oldMessages
@@ -161,4 +161,10 @@ const MessagesWrapper = styled.div`
 `;
 const InputWrapper = styled.div`
   width: 100vw;
+`;
+const Title = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+  color: #515151;
 `;

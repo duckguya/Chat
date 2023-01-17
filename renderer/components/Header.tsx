@@ -6,24 +6,32 @@ import { ipcRenderer } from "electron";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isLoginAtom } from "../atoms";
 
 const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
-function Nav(isLogin: boolean) {
-  const [isVisible, setIsVisible] = useState(true);
-  useEffect(() => {
-    ipcRenderer.send("CONNECTION");
-    ipcRenderer.on("CONNECTION", (evnet, payload) => {
-      if (payload.length > 0) {
-        setIsVisible(true);
-      }
-    });
-  }, [isLogin]);
+interface IProps {
+  isLogin: boolean;
+}
+function Nav() {
+  const [isVisible, setIsVisible] = useState(false);
+  const isLogin = useRecoilValue(isLoginAtom);
+
+  // useEffect(() => {
+  //   console.log("header!");
+  //   ipcRenderer.send("CONNECTION");
+  //   ipcRenderer.on("CONNECTION", (evnet, payload) => {
+  //     if (payload.length > 0) {
+  //       setIsVisible(true);
+  //     }
+  //   });
+  // }, [isLogin]);
 
   return (
     <React.Fragment>
       <Container>
-        {isVisible && (
+        {isLogin && (
           <Header>
             <Link href="/room">
               <a>

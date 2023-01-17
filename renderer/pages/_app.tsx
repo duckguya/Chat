@@ -73,6 +73,7 @@ a{
 function MyApp({ Component, pageProps }: AppProps) {
   const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
@@ -84,6 +85,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     });
   }, []);
+
   return (
     <React.Fragment>
       <Head children={""}>
@@ -91,8 +93,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <RecoilRoot children={""}>
         <GlobalStyle />
-        <Nav isLogin={isLogin} />
-        <div style={{ paddingTop: "90px" }}>
+        <Nav />
+        <div style={{ paddingTop: "37px" }}>
           <Component {...pageProps} />
         </div>
       </RecoilRoot>

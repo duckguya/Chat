@@ -26,7 +26,6 @@ function Room() {
       {/* <title>room</title> */}
       {/* </Head> */}
       <Content>
-        {" "}
         <UserList />
       </Content>
     </React.Fragment>

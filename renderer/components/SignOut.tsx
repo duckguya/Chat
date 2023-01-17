@@ -5,9 +5,11 @@ import Cookies from "universal-cookie";
 import { ipcRenderer } from "electron";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isLoginAtom } from "../atoms";
 
 const SignOut = () => {
-  const cookies = new Cookies();
+  const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   const onClicked = async () => {
     try {
@@ -15,8 +17,8 @@ const SignOut = () => {
       // await auth.signOut();
       ipcRenderer.send("REMOVE_TOKEN");
       ipcRenderer.on("REMOVE_TOKEN", (event, payload) => {
-        console.log(payload);
         if (payload) {
+          setIsLogin(false);
           router.push("/");
         }
       });
