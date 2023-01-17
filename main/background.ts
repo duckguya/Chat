@@ -7,11 +7,15 @@ import { async } from "@firebase/util";
 import {
   addDoc,
   collection,
+  getDocFromCache,
   limit,
   onSnapshot,
   orderBy,
   query,
   where,
+  doc,
+  getDoc,
+  getDocs,
 } from "firebase/firestore";
 import { auth, dbService } from "./firebase";
 import {
@@ -139,7 +143,16 @@ ipcMain.on("PROFILE", async (event, payload) => {
     })
     .then(async (cookies) => {
       if (cookies.length > 0) {
-        await event.reply("PROFILE_UID", cookies[0]?.value);
+        const q = query(
+          collection(dbService, "users"),
+          where("uid", "==", cookies[0]?.value)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(async (doc) => {
+          if (doc.exists()) {
+            await event.reply("PROFILE_UID", doc.data());
+          }
+        });
       } else {
         await event.reply("PROFILE_UID", "");
       }

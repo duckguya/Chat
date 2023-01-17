@@ -24,9 +24,15 @@ interface IOldMessage {
   text: string;
 }
 
+interface IUser {
+  uid: string;
+  email: string;
+  createdAt: number;
+}
+
 export default function Chats() {
   const [roomUserId, setRoomUserId] = useState("");
-  const [loginId, setLoginId] = useState("");
+  const [loginInfo, setLoginInfo] = useState<IUser>();
 
   const [roomType, setRoomType] = useRecoilState(roomIdAtom);
   const [roomId, setRoomId] = useState("");
@@ -40,20 +46,27 @@ export default function Chats() {
   //   전송 버튼을 누르고 데이터 저장
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
-      if (loginId) {
-        const data = {
-          createdAt: Date.now(),
-          author: loginId,
-          text: values.text,
-          rooms: [{ uid: [loginId, roomUserId] }],
-        };
+      if (loginInfo.uid) {
+        let data;
+        if (roomType === "group") {
+          data = {
+            createdAt: Date.now(),
+            author: loginInfo.email,
+            text: values.text,
+          };
+        } else {
+          data = {
+            createdAt: Date.now(),
+            author: loginInfo.email,
+            text: values.text,
+            // rooms: [{ uid: [loginId, roomUserId] }],
+          };
+        }
         ipcRenderer.send("SEND_MESSAGE", data, roomId);
       }
 
       // Clear input field
       setNewMessage("");
-      // Scroll down to the bottom of the list
-      // scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -65,12 +78,18 @@ export default function Chats() {
     } else {
       setRoomUserId(roomUserUid);
       ipcRenderer.send("PROFILE");
-      ipcRenderer.on("PROFILE_UID", (event, loginUid) => {
-        if (loginUid !== "") {
-          const ids = [loginUid, roomUserUid];
-          let sortedIds = ids.sort()[0] + ids.sort()[1];
+
+      ipcRenderer.on("PROFILE_UID", (event, userInfo) => {
+        if (userInfo.uid !== "") {
+          let sortedIds;
+          if (roomType === "group") {
+            sortedIds = "group";
+          } else {
+            const ids = [userInfo.uid, roomUserUid];
+            sortedIds = ids.sort()[0] + ids.sort()[1];
+          }
           setRoomId(sortedIds);
-          setLoginId(loginUid);
+          setLoginInfo(userInfo);
           // 대화내용 가져오기
           ipcRenderer.send("MESSAGES", sortedIds);
           ipcRenderer.on("MESSAGES", (event, payload) => {
@@ -100,6 +119,7 @@ export default function Chats() {
           <div>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </div>
+
           {oldMessages &&
             oldMessages
               .sort((first, second) =>
