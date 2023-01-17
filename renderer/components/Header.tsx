@@ -19,7 +19,6 @@ function Nav() {
   const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   useEffect(() => {
-    console.log("header!");
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
       if (payload.length > 0) {

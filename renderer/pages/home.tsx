@@ -20,6 +20,10 @@ function Home() {
   const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   useEffect(() => {
+    ipcRenderer.send("PING");
+    ipcRenderer.on("PONG", (event, payload) => {
+      console.log(payload);
+    });
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (evnet, payload) => {
       if (payload.length > 0) router.push("/room");

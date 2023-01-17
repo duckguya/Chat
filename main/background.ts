@@ -92,7 +92,7 @@ ipcMain.on("SIGN_UP", async (event, payload) => {
   auth.currentUser.getIdToken().then(async function (idToken) {
     await session.defaultSession.cookies
       .set({
-        url: "http://localhost:3000/*",
+        url: "https://localhost:3000/*",
         name: "token",
         value: idToken,
         httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
@@ -101,7 +101,7 @@ ipcMain.on("SIGN_UP", async (event, payload) => {
       .then(() => {});
     await session.defaultSession.cookies
       .set({
-        url: "http://localhost:3000/*",
+        url: "https://localhost:3000/*",
         name: "uid",
         value: newUser?.user?.uid,
       })
@@ -116,7 +116,7 @@ ipcMain.on("SIGN_IN", async (event, payload) => {
   auth.currentUser.getIdToken().then(async function (idToken) {
     await session.defaultSession.cookies
       .set({
-        url: "http://localhost:3000/*",
+        url: "https://localhost:3000/*",
         name: "token",
         value: idToken,
         httpOnly: true, // client에서 쿠키 접근함을 방지하기위해 설정 ( 보안 설정 )
@@ -125,7 +125,7 @@ ipcMain.on("SIGN_IN", async (event, payload) => {
       .then(() => {});
     await session.defaultSession.cookies
       .set({
-        url: "http://localhost:3000/*",
+        url: "https://localhost:3000/*",
         name: "uid",
         value: auth.currentUser.uid,
       })
@@ -138,7 +138,7 @@ ipcMain.on("SIGN_IN", async (event, payload) => {
 ipcMain.on("PROFILE", async (event, payload) => {
   await session.defaultSession.cookies
     .get({
-      url: "http://localhost:3000/*",
+      url: "https://localhost:3000/*",
       name: "uid",
     })
     .then(async (cookies) => {
@@ -163,14 +163,14 @@ ipcMain.on("CONNECTION", async (event, payload) => {
   // const isLogin = cookies.verify(payload.token.accessToken).ok;
   await session.defaultSession.cookies
     .get({
-      url: "http://localhost:3000/*",
+      url: "https://localhost:3000/*",
       name: "token",
     })
     .then(async (cookies) => {
       if (cookies.length > 0) {
         await session.defaultSession.cookies
           .get({
-            url: "http://localhost:3000/*",
+            url: "https://localhost:3000/*",
             name: "uid",
           })
           .then(async (cookies) => {
@@ -202,7 +202,7 @@ ipcMain.on("REMOVE_TOKEN", async (event, payload) => {
 ipcMain.on("USER_LIST", async (event, payload) => {
   await session.defaultSession.cookies
     .get({
-      url: "http://localhost:3000/*",
+      url: "https://localhost:3000/*",
       name: "uid",
     })
     .then((cookies) => {
@@ -249,6 +249,10 @@ ipcMain.on("SEND_MESSAGE", async (event, payload, roomId) => {
   }
 });
 
+ipcMain.on("PING", (event, payload) => {
+  console.log("ping");
+  event.reply("PONG", "pong");
+});
 //
 app.on("window-all-closed", () => {
   app.quit();
