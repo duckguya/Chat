@@ -65,8 +65,8 @@ if (isProd) {
   await app.whenReady();
 
   const mainWindow = createWindow("main", {
-    width: 523,
-    height: 720,
+    width: 768,
+    height: 1024,
   });
 
   if (isProd) {
@@ -173,11 +173,11 @@ ipcMain.on("CONNECTION", async (event, payload) => {
             url: "http://localhost:3000/*",
             name: "uid",
           })
-          .then((cookies) => {
-            event.reply("CONNECTION", cookies[0]?.value);
+          .then(async (cookies) => {
+            await event.reply("CONNECTION", cookies[0]?.value);
           });
       } else {
-        event.reply("CONNECTION", "");
+        await event.reply("CONNECTION", "");
       }
     });
   // console.log("payload.token", payload.token);

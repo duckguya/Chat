@@ -17,7 +17,6 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
         <FormWrapper>
           <FormItem name="text">
             <Input
-              className="flex_item1"
               size="large"
               name="text"
               // value={newMessage}
@@ -28,7 +27,6 @@ function ChatInput({ newMessage, onFinished, handleOnChange }: IProps) {
 
           <FormItem>
             <Button
-              className="flex_item2"
               size="large"
               type="primary"
               htmlType="submit"

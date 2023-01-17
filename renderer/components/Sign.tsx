@@ -96,15 +96,9 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
       <Head children={""}>
         <title>sign in</title>
       </Head>
-
-      <Content style={{ padding: 48 }}>
-        <p component="h1" variant="h5">
-          {isSignIn ? "Sign In" : "Sign Up"}
-        </p>
+      <Container>
         <Form
           layout="horizontal"
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -167,24 +161,39 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
             </>
           )}
 
-          <FormItem
-            style={{ marginTop: 48 }}
-            wrapperCol={{ span: 14, offset: 5 }}
-          >
-            <Button
-              size="large"
-              type="primary"
-              htmlType="submit"
-              style={{ width: "100%" }}
-            >
+          <FormItem style={{ marginTop: 48 }}>
+            <Button size="large" htmlType="submit" style={{ width: "100%" }}>
               {isSignIn ? "로그인" : "회원가입"}
             </Button>
           </FormItem>
         </Form>
-      </Content>
+      </Container>
     </React.Fragment>
   );
 };
+
+const Container = styled.div`
+  .ant-input,
+  .ant-input-password {
+    border-radius: 10px;
+  }
+  .ant-btn {
+    background-color: #ffe731;
+    border-color: #ffe731;
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      color: gray;
+      background-color: #ffe731;
+      border-color: #ffe731;
+      text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+      box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+    }
+  }
+`;
 const FlagMessage = styled.p`
   color: tomato;
   display: flex;

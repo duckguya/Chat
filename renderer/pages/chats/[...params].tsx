@@ -153,7 +153,7 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 const MessagesWrapper = styled.div`
-  background-color: #eee;
+  background-color: #a8c0cc;
   padding: 20px;
   height: 100%;
   margin-bottom: 50px;

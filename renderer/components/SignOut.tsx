@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import { Button } from "antd";
-import styled from "styled-components";
-import { signOut } from "firebase/auth";
-// import { auth } from "../firebase";
 import router from "next/router";
 import Cookies from "universal-cookie";
-import { useRecoilState } from "recoil";
-import { auth } from "../firebase";
 import { ipcRenderer } from "electron";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 
 const SignOut = () => {
   const cookies = new Cookies();
@@ -32,14 +28,14 @@ const SignOut = () => {
   return (
     <React.Fragment>
       {/* {isUser && ( */}
-      <Button
-        size="small"
-        type="primary"
-        style={{ width: "10%" }}
+
+      <FontAwesomeIcon
         onClick={onClicked}
-      >
-        로그아웃
-      </Button>
+        icon={faSignOut}
+        color={"white"}
+        size="1x"
+        style={{ cursor: "pointer" }}
+      />
       {/* )} */}
     </React.Fragment>
   );

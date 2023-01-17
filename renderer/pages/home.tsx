@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { auth, dbService } from "../firebase";
-import Cookies from "universal-cookie";
-import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { ipcRenderer } from "electron";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import styled from "styled-components";
 
 const Sign = dynamic(() => import("../components/Sign"), { ssr: false });
 interface IFormData {
@@ -35,24 +31,6 @@ function Home() {
   const handleSubmit = async (values: IFormData) => {
     try {
       ipcRenderer.send("SIGN_UP", values);
-      // const newUser = await createUserWithEmailAndPassword(
-      //   auth,
-      //   values.email,
-      //   values.password
-      // );
-      // await addDoc(collection(dbService, "users"), {
-      //   email: values.email,
-      //   createdAt: Date.now(),
-      //   uid: newUser.user.uid,
-      // });
-      // auth.currentUser.getIdToken().then(function (idToken) {
-      //   ipcRenderer.send("SIGN_IN", { idToken, uid: auth.currentUser.uid });
-      //   ipcRenderer.on("TOKEN", (evnet, payload) => {
-      //     if (payload) {
-      //       router.push("/room");
-      //     }
-      //   });
-      // });
       ipcRenderer.on("TOKEN", (evnet, payload) => {
         if (payload) {
           router.push("/room");
@@ -69,19 +47,28 @@ function Home() {
       <Head children={""}>
         <title>sign in</title>
       </Head>
-      {!isSignUp ? (
-        <>
-          <Sign isSignIn={true} />
-          <a onClick={() => handleModalClick(true)}>회원가입</a>
-        </>
-      ) : (
-        <>
-          <Sign isSignIn={false} handleSubmit={handleSubmit} />
-          <a onClick={() => handleModalClick(false)}>로그인</a>
-        </>
-      )}
+      <Container>
+        {!isSignUp ? (
+          <SignWrapper>
+            <Sign isSignIn={true} />
+            <a onClick={() => handleModalClick(true)}>회원가입</a>
+          </SignWrapper>
+        ) : (
+          <SignWrapper>
+            <Sign isSignIn={false} handleSubmit={handleSubmit} />
+            <a onClick={() => handleModalClick(false)}>로그인</a>
+          </SignWrapper>
+        )}
+      </Container>
     </React.Fragment>
   );
 }
+const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
+`;
+const SignWrapper = styled.div`
+  margin: 40px;
+`;
 
 export default Home;

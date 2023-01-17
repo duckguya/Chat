@@ -66,10 +66,10 @@ const UserList = () => {
 };
 
 const Container = styled.div`
-  width: 100%;
+  width: 100vw;
   display: flex;
   flex-direction: column;
-
+  align-items: center;
   .ant-btn {
     margin: 10px;
     padding: 20px;

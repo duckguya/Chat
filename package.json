@@ -11,6 +11,8 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/react-cookies": "^0.1.0",
     "axios": "^1.2.2",
     "electron-serve": "^1.1.0",
