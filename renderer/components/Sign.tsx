@@ -36,7 +36,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
   const [password, setPassword] = useState("");
   const [passCheck, setPassCheck] = useState(true);
   const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
-
+  const [check, setCheck] = useState(false);
   useEffect(() => {
     ipcRenderer.send("CONNECTION");
     ipcRenderer.on("CONNECTION", (event, payload) => {
@@ -57,6 +57,11 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         // 로그인이라면
         try {
           ipcRenderer.send("SIGN_IN", values);
+          ipcRenderer.on("SIGN_IN", (evnet, payload) => {
+            if (!payload) {
+              setCheck(true);
+            }
+          });
           ipcRenderer.on("TOKEN", (evnet, payload) => {
             if (payload) {
               setIsLogin(true);
@@ -126,7 +131,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
               onChange={handlePasswordChange}
             />
           </FormItem>
-          {!isLogin && isSignIn && (
+          {check && isSignIn && (
             <FlagMessage>이메일과 비밀번호를 확인해주세요.</FlagMessage>
           )}
 

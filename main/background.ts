@@ -112,7 +112,12 @@ ipcMain.on("SIGN_UP", async (event, payload) => {
 });
 
 ipcMain.on("SIGN_IN", async (event, payload) => {
-  await signInWithEmailAndPassword(auth, payload.email, payload.password);
+  try {
+    await signInWithEmailAndPassword(auth, payload.email, payload.password);
+    event.reply("SIGN_IN", true);
+  } catch (error) {
+    event.reply("SIGN_IN", false);
+  }
   auth.currentUser.getIdToken().then(async function (idToken) {
     await session.defaultSession.cookies
       .set({
