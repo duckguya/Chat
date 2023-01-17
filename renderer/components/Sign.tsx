@@ -44,7 +44,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         router.push("/room");
       }
     });
-  }, []);
+  }, [isLogin]);
 
   const onFinish = async (values: IFormData) => {
     if (!passCheck) {
@@ -57,9 +57,9 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
         // 로그인이라면
         try {
           ipcRenderer.send("SIGN_IN", values);
-          setIsLogin(true);
           ipcRenderer.on("TOKEN", (evnet, payload) => {
             if (payload) {
+              setIsLogin(true);
               router.push("/room");
             }
           });

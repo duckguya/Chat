@@ -17,7 +17,7 @@ interface IFormData {
 function Home() {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
+  // const [isLogin, setIsLogin] = useRecoilState(isLoginAtom);
 
   useEffect(() => {
     ipcRenderer.send("PING");
@@ -40,7 +40,7 @@ function Home() {
       ipcRenderer.send("SIGN_UP", values);
       ipcRenderer.on("TOKEN", (evnet, payload) => {
         if (payload) {
-          setIsLogin(true);
+          // setIsLogin(true);
           router.push("/room");
         }
       });

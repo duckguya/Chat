@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { roomIdAtom } from "../atoms";
+import { roomTypeAtom } from "../atoms";
 interface IProps {
   id: string;
   author: string;
@@ -19,7 +19,7 @@ function Messages(data: IProps) {
   const [textTime, setTextTime] = useState("");
   const [loginInfo, setLoginInfo] = useState<IUser>();
   const scrollRef = useRef<HTMLInputElement>();
-  const roomType = useRecoilValue(roomIdAtom);
+  const roomType = useRecoilValue(roomTypeAtom);
 
   useEffect(() => {
     // 스크롤 하단으로 내리기
@@ -40,11 +40,13 @@ function Messages(data: IProps) {
     <React.Fragment>
       <Container ref={scrollRef}>
         {data.author !== loginInfo?.email ? (
-          <>
+          <YourMessageWrapper>
             {roomType === "group" && <p>{data.author}</p>}
-            <TheOtherPersonText>{data.text}</TheOtherPersonText>
-            <TimeText>{textTime}</TimeText>
-          </>
+            <TextWrapper>
+              <TheOtherPersonText>{data.text}</TheOtherPersonText>
+              <TimeText>{textTime}</TimeText>
+            </TextWrapper>
+          </YourMessageWrapper>
         ) : (
           <MytextWrapper>
             <div />
@@ -58,6 +60,17 @@ function Messages(data: IProps) {
 }
 
 const Container = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
+const YourMessageWrapper = styled.div`
+  padding-top: 10px;
+  p {
+    margin: 0;
+    padding-bottom: 4px;
+  }
+`;
+const TextWrapper = styled.div`
   display: flex;
   align-items: flex-end;
 `;

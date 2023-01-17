@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
-import { useSetRecoilState } from "recoil";
-import { roomIdAtom } from "../atoms";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { loginUserInfoAtom, roomIdAtom, roomTypeAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
 import React from "react";
@@ -20,11 +20,18 @@ interface IProps {
   // children?: React.ReactFragment;
   users: UserList[];
 }
-
+interface IUser {
+  uid: string;
+  email: string;
+  createdAt: number;
+}
 const UserList = () => {
-  const setRoomId = useSetRecoilState(roomIdAtom);
+  const setRoomType = useSetRecoilState(roomTypeAtom);
   const router = useRouter();
   const [userList, setUserList] = useState([]);
+
+  const [loginInfo, setLoginInfo] = useRecoilState(loginUserInfoAtom);
+  const [roomId, setRoomId] = useRecoilState(roomIdAtom);
 
   useEffect(() => {
     ipcRenderer.send("USER_LIST");
@@ -38,9 +45,28 @@ const UserList = () => {
     uid?: string;
   }
   const onClicked = ({ type, uid }: onClickedData) => {
-    setRoomId(type);
+    setRoomType(type);
+
     localStorage.removeItem("roomUserUid");
     localStorage.setItem("roomUserUid", uid);
+
+    ipcRenderer.send("PROFILE");
+    ipcRenderer.on("PROFILE_UID", async (event, userInfo) => {
+      if (userInfo.uid !== "") {
+        let sortedIds;
+        if (type === "group") {
+          sortedIds = "group";
+        } else {
+          const ids = [userInfo.uid, uid];
+          sortedIds = ids.sort()[0] + ids.sort()[1];
+        }
+        console.log("sortedIds", sortedIds);
+        setRoomId(sortedIds);
+        setLoginInfo(userInfo);
+      } else {
+        console.log("");
+      }
+    });
     router.push(`/chats/${uid}`);
   };
 
