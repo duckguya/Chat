@@ -2,11 +2,7 @@ import { Header } from "antd/lib/layout/layout";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { auth } from "../firebase";
-import Cookies from "universal-cookie";
 import { ipcRenderer } from "electron";
-import { useRouter } from "next/router";
 
 const SignOut = dynamic(() => import("../components/SignOut"), { ssr: false });
 
@@ -23,7 +19,7 @@ function Nav() {
 
   return (
     <React.Fragment>
-      <Header>
+      <Header style={{ position: "fixed", width: "100%", zIndex: 99 }}>
         {isVisible && (
           <>
             <Link href="/room">

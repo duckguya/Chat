@@ -1,7 +1,6 @@
 import { ipcRenderer } from "electron";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { auth } from "../firebase";
 interface IProps {
   id: string;
   author: string;
@@ -12,8 +11,13 @@ interface IProps {
 function Messages(data: IProps) {
   const [textTime, setTextTime] = useState("");
   const [loginUid, setLoginUid] = useState("");
+  const scrollRef = useRef<HTMLInputElement>();
 
   useEffect(() => {
+    // 스크롤 하단으로 내리기
+    scrollRef.current.scrollIntoView({
+      behavior: "smooth",
+    });
     ipcRenderer.send("PROFILE");
     ipcRenderer.on("PROFILE_UID", (event, payload) => {
       setLoginUid(payload);
@@ -22,11 +26,10 @@ function Messages(data: IProps) {
     const time = new Date(data.createdAt).toTimeString().split(" ")[0];
     setTextTime(date + " " + time);
   }, []);
-  console.log("in Messages");
 
   return (
     <React.Fragment>
-      <Container>
+      <Container ref={scrollRef}>
         {data.author !== loginUid ? (
           <>
             <TheOtherPersonText>{data.text}</TheOtherPersonText>

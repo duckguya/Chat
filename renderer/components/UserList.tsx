@@ -1,35 +1,13 @@
-import { Content } from "antd/lib/layout/layout";
-import Title from "antd/lib/skeleton/Title";
-import {
-  addDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  onSnapshot,
-} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "antd";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { roomIdAtom } from "../atoms";
 import Head from "next/head";
 import { ipcRenderer } from "electron";
-import { auth, dbService } from "../firebase";
 import React from "react";
-import Cookies from "universal-cookie";
 
-// interface UserList {
-//   userId: string;
-//   password: string;
-// }
-
-// interface Props {
-//   userInfo: UserList[];
-//   onClick: (item: string) => void;
-//   userId: string;
-// }
 interface UserList {
   uid: string;
   id: string;
@@ -42,9 +20,6 @@ interface IProps {
 }
 
 const UserList = () => {
-  // const [users, setUsers] = useState(datas);
-
-  const [uid, setUid] = useState("false");
   const setRoomId = useSetRecoilState(roomIdAtom);
   const router = useRouter();
   const [userList, setUserList] = useState([]);
@@ -55,59 +30,6 @@ const UserList = () => {
       setUserList([...payload]);
     });
   }, []);
-
-  // const getUsers = async () => {
-  //   ipcRenderer.send("PROFILE");
-  //   ipcRenderer.on("PROFILE", (evnet, payload) => {
-  //     if (payload !== "") {
-  //       setUid(payload);
-  //     }
-  //   });
-
-  //   if (uid !== "false") {
-  //     try {
-  //       console.log(1);
-  //       const q = query(
-  //         collection(dbService, "users"),
-  //         where("uid", "!=", uid)
-  //       );
-  //       console.log(2);
-  //       onSnapshot(q, (querySnapshot) => {
-  //         console.log(3);
-  //         let userData = [];
-  //         querySnapshot.forEach((doc) => {
-  //           console.log(4);
-  //           const userObj = {
-  //             ...doc.data(),
-  //             id: doc.id,
-  //           };
-  //           userData.push(userObj);
-  //           console.log(5);
-  //         });
-  //         console.log(userData);
-  //         setUsers(userData);
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   } else {
-  //     // router.push("/");
-  //   }
-  // };
-  // useEffect(() => {
-  //   console.log("here 1");
-  //   ipcRenderer.send("CONNECTION");
-  //   ipcRenderer.on("CONNECTION", (event, isUser) => {
-  //     console.log("here 2");
-  //     if (isUser) {
-  //       console.log("here 3");
-  //       getUsers();
-  //     } else {
-  //       console.log("여길 한 번 들리나?");
-  //       router.push("/");
-  //     }
-  //   });
-  // }, []);
 
   interface onClickedData {
     type: string;
@@ -131,11 +53,8 @@ const UserList = () => {
         {userList &&
           userList.map((data, index) => (
             <Button
-              block
+              // block
               key={index}
-              style={{
-                margin: "10px",
-              }}
               onClick={() => onClicked({ type: data.email, uid: data.uid })}
             >
               {data.email}
@@ -150,6 +69,19 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+
+  .ant-btn {
+    margin: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    &:hover {
+      border-color: #ffd220;
+      color: #ffd220;
+    }
+  }
 `;
 
 export default UserList;

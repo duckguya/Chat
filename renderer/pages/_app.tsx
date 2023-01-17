@@ -1,24 +1,77 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
-import { Header } from "antd/lib/layout/layout";
-import Link from "next/link";
 import { RecoilRoot } from "recoil";
 import "firebase/analytics";
 import "firebase/auth";
 import "firebase/firestore";
-// import SignOut from "../components/SignOut";
-import Cookies from "universal-cookie";
-import styled from "styled-components";
-// axios.defaults.baseURL = "https://localhost:8888";
-// axios.defaults.withCredentials = true;
-import dynamic from "next/dynamic";
-import { auth } from "../firebase";
 import Nav from "../components/Header";
-import axios from "axios";
 import { ipcRenderer } from "electron";
 import { useRouter } from "next/router";
+import { createGlobalStyle, styled } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+margin: 0;
+padding: 0;
+border: 0;
+font-size: 100%;
+font: inherit;
+vertical-align: baseline;
+&::-webkit-scrollbar {
+    display: none;
+  }
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+display: block;
+}
+body {
+line-height: 1;
+}
+ol, ul {
+list-style: none;
+}
+blockquote, q {
+quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+content: '';
+content: none;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+/*  */
+*{
+  box-sizing: border-box;
+}
+body{
+  /* google font  */
+  font-family: 'Source Sans Pro', sans-serif;
+}
+a{
+  text-decoration: none;
+  color:inherit;
+}
+`;
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -36,8 +89,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <RecoilRoot children={""}>
+        <GlobalStyle />
         <Nav />
-        <Component {...pageProps} />
+        <div style={{ paddingTop: "90px" }}>
+          <Component {...pageProps} />
+        </div>
       </RecoilRoot>
     </React.Fragment>
   );

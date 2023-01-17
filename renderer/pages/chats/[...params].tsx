@@ -2,17 +2,6 @@ import { useRecoilState } from "recoil";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Head from "next/head";
-import {
-  addDoc,
-  collection,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { auth, dbService } from "../../firebase";
-// import Messages from "../../components/Messages";
-// import ChatInput from "../../components/ChatInput";
 import router from "next/router";
 import { roomIdAtom } from "../../atoms";
 import { ipcRenderer } from "electron";
@@ -45,7 +34,6 @@ export default function Chats() {
   const [uid, setUid] = useState("");
   // 포커싱과 하단 스크롤을 위한 useRef
   const inputRef = useRef();
-  const bottomListRef = useRef();
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
 
@@ -65,7 +53,7 @@ export default function Chats() {
       // Clear input field
       setNewMessage("");
       // Scroll down to the bottom of the list
-      // bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+      // scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -138,7 +126,7 @@ export default function Chats() {
   );
 }
 const Container = styled.div`
-  height: 92.2vh;
+  height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -148,8 +136,8 @@ const MessagesWrapper = styled.div`
   background-color: #eee;
   padding: 20px;
   height: 100%;
-
-  /* overflow: scroll; */
+  margin-bottom: 50px;
+  overflow: scroll;
 `;
 const InputWrapper = styled.div`
   width: 100vw;
