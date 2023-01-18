@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Head from "next/head";
 import router from "next/router";
@@ -97,6 +97,14 @@ export default function Chats() {
       // });
     }
   };
+  const scrollToBottom = useCallback(() => {
+    // 스크롤 내리기
+    scrollRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest",
+    });
+  }, [newMessage]);
 
   useEffect(() => {
     getRoomId();
@@ -106,11 +114,8 @@ export default function Chats() {
       setOldMessages(payload);
     });
     // 스크롤 하단으로 내리기
-    scrollRef.current.scrollIntoView({
-      behavior: "smooth",
-      // block: "end",
-    });
-  }, []);
+    scrollToBottom();
+  }, [newMessage]);
 
   // 채팅 작성했을 때 onChanghandler, onSubmitHandler
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,11 +131,11 @@ export default function Chats() {
           </title>
         </Head>
 
-        <MessagesWrapper>
+        <MessagesWrapper ref={scrollRef}>
           <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </Title>
-          <ul>
+          <div>
             {oldMessages &&
               oldMessages
                 .sort((first, second) =>
@@ -144,8 +149,7 @@ export default function Chats() {
                     <Messages {...msg} />
                   </li>
                 ))}
-          </ul>
-          <div ref={scrollRef} />
+          </div>
         </MessagesWrapper>
         <InputWrapper>
           <ChatInput
