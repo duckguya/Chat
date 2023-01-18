@@ -22,11 +22,6 @@ function Messages(data: IProps) {
   const roomType = useRecoilValue(roomTypeAtom);
 
   useEffect(() => {
-    // 스크롤 하단으로 내리기
-    scrollRef.current.scrollIntoView({
-      behavior: "smooth",
-    });
-
     ipcRenderer.send("PROFILE");
     ipcRenderer.on("PROFILE_UID", (event, userInfo) => {
       setLoginInfo(userInfo);
@@ -34,11 +29,15 @@ function Messages(data: IProps) {
     const date = new Date(data.createdAt).toISOString().split("T")[0];
     const time = new Date(data.createdAt).toTimeString().split(" ")[0];
     setTextTime(date + " " + time);
+    // 스크롤 하단으로 내리기
+    // scrollRef.current.scrollIntoView({
+    //   behavior: "smooth",
+    // });
   }, []);
 
   return (
     <React.Fragment>
-      <Container ref={scrollRef}>
+      <Container>
         {data.author !== loginInfo?.email ? (
           <YourMessageWrapper>
             {roomType === "group" && <p>{data.author}</p>}
@@ -62,6 +61,7 @@ function Messages(data: IProps) {
 const Container = styled.div`
   display: flex;
   align-items: flex-end;
+  /* overflow: scroll; */
 `;
 const YourMessageWrapper = styled.div`
   padding-top: 10px;

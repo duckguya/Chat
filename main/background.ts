@@ -227,7 +227,7 @@ ipcMain.on("USER_LIST", async (event, payload) => {
     });
 });
 
-ipcMain.on("MESSAGES", (event, roomId) => {
+ipcMain.on("GETMESSAGES", (event, roomId) => {
   const q = query(
     collection(dbService, `messages${roomId}`),
     orderBy("createdAt", "desc"),
@@ -242,7 +242,7 @@ ipcMain.on("MESSAGES", (event, roomId) => {
       };
       messageList.push(mObj);
     });
-    event.reply("MESSAGES", messageList);
+    event.reply("GETMESSAGES", messageList);
   });
 });
 

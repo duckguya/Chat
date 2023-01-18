@@ -33,18 +33,18 @@ interface IUser {
 export default function Chats() {
   // const [roomUserId, setRoomUserId] = useState("");
   const [loginInfo, setLoginInfo] = useRecoilState(loginUserInfoAtom);
-
+  const scrollRef = useRef<HTMLInputElement>();
   const [roomType, setRoomType] = useRecoilState(roomTypeAtom);
-  const [roomId, setRoomId] = useRecoilState(roomIdAtom);
-  // const [roomId, setRoomId] = useState("");
+  // const [roomId, setRoomId] = useRecoilState(roomIdAtom);
+  const [roomId, setRoomId] = useState("");
   const [roomUserid, setRoomUserId] = useState("");
   const [oldMessages, setOldMessages] = useState<IOldMessage[]>([]);
   const [uid, setUid] = useState("");
 
   // 채팅 메세지 생성시 useState로 새로운 메세지 저장
   const [newMessage, setNewMessage] = useState("");
-  //   전송 버튼을 누르고 데이터 저장
 
+  //   전송 버튼을 누르고 데이터 저장
   const onFinished = async (values: IFormData) => {
     if (newMessage) {
       if (loginInfo.uid) {
@@ -78,6 +78,7 @@ export default function Chats() {
       router.push("/room");
     } else {
       setRoomUserId(localStorage.getItem("roomUserUid"));
+      setRoomId(localStorage.getItem("roomId"));
       // let sortedIds;
       // ipcRenderer.send("PROFILE");
       // ipcRenderer.on("PROFILE_UID", async (event, userInfo) => {
@@ -100,13 +101,14 @@ export default function Chats() {
   useEffect(() => {
     getRoomId();
     // 대화내용 가져오기
-    console.log("roomId", roomId);
-    console.log("roomType", roomType);
-    console.log("loginInfo", loginInfo);
-
-    ipcRenderer.send("MESSAGES", roomId);
-    ipcRenderer.on("MESSAGES", async (event, payload) => {
+    ipcRenderer.send("GETMESSAGES", localStorage.getItem("roomId"));
+    ipcRenderer.on("GETMESSAGES", async (event, payload) => {
       setOldMessages(payload);
+    });
+    // 스크롤 하단으로 내리기
+    scrollRef.current.scrollIntoView({
+      behavior: "smooth",
+      // block: "end",
     });
   }, []);
 
@@ -128,20 +130,22 @@ export default function Chats() {
           <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </Title>
-
-          {oldMessages &&
-            oldMessages
-              .sort((first, second) =>
-                first?.createdAt <= second?.createdAt ? -1 : 1
-              )
-              .map((msg, index) => (
-                <li
-                  key={index}
-                  style={{ listStyleType: "none", paddingBottom: "10px" }}
-                >
-                  <Messages {...msg} />
-                </li>
-              ))}
+          <ul>
+            {oldMessages &&
+              oldMessages
+                .sort((first, second) =>
+                  first?.createdAt <= second?.createdAt ? -1 : 1
+                )
+                .map((msg, index) => (
+                  <li
+                    key={index}
+                    style={{ listStyleType: "none", paddingBottom: "10px" }}
+                  >
+                    <Messages {...msg} />
+                  </li>
+                ))}
+          </ul>
+          <div ref={scrollRef} />
         </MessagesWrapper>
         <InputWrapper>
           <ChatInput

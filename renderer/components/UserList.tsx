@@ -60,14 +60,14 @@ const UserList = () => {
           const ids = [userInfo.uid, uid];
           sortedIds = ids.sort()[0] + ids.sort()[1];
         }
-        console.log("sortedIds", sortedIds);
+        localStorage.setItem("roomId", sortedIds);
         setRoomId(sortedIds);
         setLoginInfo(userInfo);
+        router.push(`/chats/${uid}`);
       } else {
         console.log("");
       }
     });
-    router.push(`/chats/${uid}`);
   };
 
   return (
