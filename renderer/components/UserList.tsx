@@ -74,9 +74,6 @@ const UserList = () => {
   return (
     <React.Fragment>
       <Container>
-        <Head children={""}>
-          <title>유저 리스트</title>
-        </Head>
         <Button onClick={() => onClicked({ type: "group" })}>
           <span>그룹채팅</span>
           <FontAwesomeIcon

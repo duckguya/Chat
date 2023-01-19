@@ -8,8 +8,42 @@
   "scripts": {
     "dev": "nextron",
     "build": "nextron build",
-    "build:mac": "nextron build --mac --x64",
+    "deploy:osx": "electron-builder --mac",
     "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "productName": "Chat-duckguya",
+    "appId": "com.chat.electron",
+    "asar": true,
+    "mac": {
+      "target": [
+        "default"
+      ]
+    },
+    "dmg": {
+      "title": "chat-duckguya"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true
+    },
+    "directories": {
+      "buildResources": "./resources/installer/",
+      "output": "./dist/",
+      "app": "."
+    }
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.2.1",

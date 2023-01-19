@@ -52,9 +52,6 @@ function Home() {
   };
   return (
     <React.Fragment>
-      <Head children={""}>
-        <title>sign in</title>
-      </Head>
       <Container>
         {!isSignUp ? (
           <SignWrapper>

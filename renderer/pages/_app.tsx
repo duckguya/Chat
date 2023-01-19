@@ -88,10 +88,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <React.Fragment>
-      <Head children={""}>
+      {/* <Head children={""}>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      <RecoilRoot children={""}>
+      </Head> */}
+      <RecoilRoot>
         <GlobalStyle />
         <Nav />
         <div style={{ paddingTop: "37px" }}>

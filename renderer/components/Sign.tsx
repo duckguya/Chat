@@ -90,9 +90,6 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
 
   return (
     <React.Fragment>
-      <Head children={"signin"}>
-        <title>sign in</title>
-      </Head>
       <Container>
         <Form
           layout="horizontal"

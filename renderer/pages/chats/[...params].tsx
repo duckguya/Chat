@@ -110,12 +110,6 @@ export default function Chats() {
   return (
     <React.Fragment>
       <Container>
-        <Head children={""}>
-          <title>
-            {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
-          </title>
-        </Head>
-
         <MessagesWrapper ref={scrollRef}>
           <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}

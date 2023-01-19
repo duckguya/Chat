@@ -8,10 +8,6 @@ const { Header, Content } = Layout;
 function Next() {
   return (
     <React.Fragment>
-      <Head children={""}>
-        <title>Next - Nextron (with-typescript-ant-design)</title>
-      </Head>
-
       <Content style={{ padding: 48 }}>
         <Result status="success" title="Nextron" subTitle="with Ant Design" />
       </Content>
