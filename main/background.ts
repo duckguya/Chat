@@ -43,7 +43,6 @@ io.on("connection", function (socket) {
   // 접속한 클라이언트의 정보가 수신되면
   socket.on("joinRoom", function (data) {
     const roomId = data;
-    console.log("roomid", roomId);
     // if (io.sockets.adapter.rooms.get(roomId))
     socket.join(roomId);
   });
@@ -185,12 +184,6 @@ ipcMain.on("CONNECTION", async (event, payload) => {
         await event.reply("CONNECTION", "");
       }
     });
-  // console.log("payload.token", payload.token);
-  // if (payload.token === token && token) {
-  //   event.reply("LOGIN_CONNECTION", true);
-  // } else {
-  //   event.reply("LOGIN_CONNECTION", false);
-  // }
 });
 
 ipcMain.on("REMOVE_TOKEN", async (event, payload) => {
@@ -255,7 +248,6 @@ ipcMain.on("SEND_MESSAGE", async (event, payload, roomId) => {
 });
 
 ipcMain.on("PING", (event, payload) => {
-  console.log("ping");
   event.reply("PONG", "pong");
 });
 //

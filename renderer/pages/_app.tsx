@@ -91,7 +91,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       {/* <Head children={""}>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head> */}
-      <RecoilRoot>
+      {/* <RecoilRoot > */}
+      <RecoilRoot children="">
         <GlobalStyle />
         <Nav />
         <div style={{ paddingTop: "37px" }}>

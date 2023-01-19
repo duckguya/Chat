@@ -1,21 +1,9 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import Head from "next/head";
-import Link from "next/link";
 import { Layout, Form, Select, Button, Input } from "antd";
 import styled from "styled-components";
-import {
-  browserSessionPersistence,
-  getAuth,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { ipcRenderer, session } from "electron";
-import store from "store";
-import router, { useRouter } from "next/router";
-import Cookies from "universal-cookie";
-import axios from "axios";
+import { ipcRenderer } from "electron";
+import router from "next/router";
 import { useRecoilState } from "recoil";
-import { auth } from "../firebase";
 import { isLoginAtom } from "../atoms";
 
 const { Header, Content } = Layout;

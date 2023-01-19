@@ -1,11 +1,12 @@
 {
   "private": true,
-  "name": "my-nextron-app",
+  "name": "chat-duckguya",
   "description": "My application description",
   "version": "1.0.0",
   "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
   "main": "app/background.js",
   "scripts": {
+    "start-renderer": "cross-env BROWSER=none npm run start",
     "dev": "nextron",
     "build": "nextron build",
     "deploy:osx": "electron-builder --mac",
@@ -50,6 +51,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/react-cookies": "^0.1.0",
     "axios": "^1.2.2",
+    "dotenv-webpack": "^8.0.1",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.1.0",
     "firebase": "^9.15.0",
