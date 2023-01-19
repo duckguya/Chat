@@ -8,7 +8,7 @@
   "scripts": {
     "start-renderer": "cross-env BROWSER=none npm run start",
     "dev": "nextron",
-    "build": "nextron build",
+    "build": "cross-env nextron build",
     "deploy:osx": "electron-builder --mac",
     "postinstall": "electron-builder install-app-deps"
   },
