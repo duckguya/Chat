@@ -1,42 +1,11 @@
-<p align="center"><img src="https://i.imgur.com/NrkTPe9.png"></p>
+### 채팅앱 만들기
 
-## Usage
+### electron + nextjs + typescript + firebase + git
 
-### Create an App
+### 개발 서버 실행
 
-```
-# with npx
-$ npx create-nextron-app my-app --example with-ant-design
-
-# with yarn
-$ yarn create nextron-app my-app --example with-ant-design
-
-# with pnpx
-$ pnpx create-nextron-app my-app --example with-ant-design
+```bash
+npm run dev
 ```
 
-### Install Dependencies
-
-```
-$ cd my-app
-
-# using yarn or npm
-$ yarn (or `npm install`)
-
-# using pnpm
-$ pnpm install --shamefully-hoist
-```
-
-### Use it
-
-```
-# development mode
-$ yarn dev (or `npm run dev` or `pnpm run dev`)
-
-# production build
-$ yarn build (or `npm run build` or `pnpm run build`)
-```
-
-## Resources
-
-<https://ant.design>
+#### duckguya@gmail.com
