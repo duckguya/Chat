@@ -77,15 +77,16 @@ export default function Chats() {
     if (!getRoomUserid) {
       router.push("/room");
     } else {
-      setRoomUserId(localStorage.getItem("roomUserUid"));
+      setRoomUserId(getRoomUserid);
     }
   };
+
+  // 스크롤 내리기
   const scrollToBottom = useCallback(() => {
-    // 스크롤 내리기
     scrollRef.current.scrollIntoView({
       behavior: "smooth",
-      block: "end",
-      inline: "nearest",
+      // block: "end",
+      // inline: "nearest",
     });
   }, [newMessage]);
 
@@ -97,6 +98,7 @@ export default function Chats() {
       setOldMessages(payload);
     });
     // 스크롤 하단으로 내리기
+    // scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     scrollToBottom();
   }, [newMessage]);
 
@@ -118,7 +120,7 @@ export default function Chats() {
           <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </Title>
-          <div>
+          <ul>
             {oldMessages &&
               oldMessages
                 .sort((first, second) =>
@@ -132,7 +134,8 @@ export default function Chats() {
                     <Messages {...msg} />
                   </li>
                 ))}
-          </div>
+          </ul>
+          <div />
         </MessagesWrapper>
         <InputWrapper>
           <ChatInput
