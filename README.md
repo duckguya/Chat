@@ -8,4 +8,10 @@
 npm run dev
 ```
 
+### build
+
+```bash
+npm run deploy:osx
+```
+
 #### duckguya@gmail.com

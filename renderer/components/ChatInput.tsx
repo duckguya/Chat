@@ -54,14 +54,14 @@ const FormWrapper = styled.footer`
   .ant-input {
     border: none;
     padding: 20px;
-    width: 90vw;
+    width: 85vw;
   }
   .ant-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 32px;
-    width: 10vw;
+    width: 15vw;
     background-color: #ffe731;
     border: none;
     color: #1a1a1a;
