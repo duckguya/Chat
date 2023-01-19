@@ -99,7 +99,8 @@ export default function Chats() {
     });
     // 스크롤 하단으로 내리기
     // scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    scrollToBottom();
+    // scrollToBottom();
+    // window.scrollTo(0, document.body.scrollHeight);
   }, [newMessage]);
 
   // 채팅 작성했을 때 onChanghandler, onSubmitHandler
@@ -110,7 +111,7 @@ export default function Chats() {
   return (
     <React.Fragment>
       <Container>
-        <MessagesWrapper ref={scrollRef}>
+        <MessagesWrapper>
           <Title>
             {roomType === "group" ? "그룹대화" : roomType + "님과의 대화"}
           </Title>
@@ -129,7 +130,6 @@ export default function Chats() {
                   </li>
                 ))}
           </ul>
-          <div />
         </MessagesWrapper>
         <InputWrapper>
           <ChatInput
@@ -155,6 +155,10 @@ const MessagesWrapper = styled.div`
   height: 100%;
   margin-bottom: 50px;
   overflow: scroll;
+  ul {
+    padding: 0;
+    margin: 0;
+  }
 `;
 const InputWrapper = styled.div`
   width: 100vw;

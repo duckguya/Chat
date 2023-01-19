@@ -30,14 +30,15 @@ function Messages(data: IProps) {
     const time = new Date(data.createdAt).toTimeString().split(" ")[0];
     setTextTime(date + " " + time);
     // 스크롤 하단으로 내리기
-    // scrollRef.current.scrollIntoView({
-    //   behavior: "smooth",
-    // });
+    scrollRef.current.scrollIntoView({
+      behavior: "smooth",
+    });
+    // window.scrollTo(0, document.body.scrollHeight);
   }, []);
 
   return (
     <React.Fragment>
-      <Container>
+      <Container ref={scrollRef}>
         {data.author !== loginInfo?.email ? (
           <YourMessageWrapper>
             {roomType === "group" && <p>{data.author}</p>}
