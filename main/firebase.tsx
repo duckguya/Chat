@@ -10,15 +10,6 @@ require("dotenv").config();
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyBkS50LQ4CBX4bB0KrK1zdYazYypjqhPV4",
-//   authDomain: "chat-dd2a7.firebaseapp.com",
-//   projectId: "chat-dd2a7",
-//   storageBucket: "chat-dd2a7.appspot.com",
-//   messagingSenderId: "857786979364",
-//   appId: "1:857786979364:web:f986550de01ff0889874b1",
-//   measurementId: "G-46FRZ6NQVW",
-// };
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,

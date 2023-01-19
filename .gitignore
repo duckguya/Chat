@@ -3,6 +3,11 @@ node_modules
 .next
 app
 dist
+
+# production
+/build
+
+# local env files
 .env
 .env.development
 .env.production
