@@ -51,23 +51,24 @@ const UserList = () => {
     localStorage.setItem("roomUserUid", uid);
 
     ipcRenderer.send("PROFILE");
+    let sortedIds = "group";
+    let userUid;
     ipcRenderer.on("PROFILE_UID", async (event, userInfo) => {
       if (userInfo.uid !== "") {
-        let sortedIds;
-        if (type === "group") {
-          sortedIds = "group";
-        } else {
-          const ids = [userInfo.uid, uid];
-          sortedIds = ids.sort()[0] + ids.sort()[1];
-        }
-        localStorage.setItem("roomId", sortedIds);
-        setRoomId(sortedIds);
+        userUid = userInfo.uid;
         setLoginInfo(userInfo);
-        router.push(`/chats/${uid}`);
       } else {
         console.log("");
       }
     });
+
+    if (type !== "group") {
+      const ids = [loginInfo.uid, uid];
+      sortedIds = ids.sort()[0] + ids.sort()[1];
+    }
+    localStorage.setItem("roomId", sortedIds);
+    setRoomId(sortedIds);
+    router.push(`/chats/${uid}`);
   };
 
   return (

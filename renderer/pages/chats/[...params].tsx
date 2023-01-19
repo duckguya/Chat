@@ -35,8 +35,8 @@ export default function Chats() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginUserInfoAtom);
   const scrollRef = useRef<HTMLInputElement>();
   const [roomType, setRoomType] = useRecoilState(roomTypeAtom);
-  // const [roomId, setRoomId] = useRecoilState(roomIdAtom);
-  const [roomId, setRoomId] = useState("");
+  const [roomId, setRoomId] = useRecoilState(roomIdAtom);
+  // const [roomId, setRoomId] = useState("");
   const [roomUserid, setRoomUserId] = useState("");
   const [oldMessages, setOldMessages] = useState<IOldMessage[]>([]);
   const [uid, setUid] = useState("");
@@ -78,23 +78,6 @@ export default function Chats() {
       router.push("/room");
     } else {
       setRoomUserId(localStorage.getItem("roomUserUid"));
-      setRoomId(localStorage.getItem("roomId"));
-      // let sortedIds;
-      // ipcRenderer.send("PROFILE");
-      // ipcRenderer.on("PROFILE_UID", async (event, userInfo) => {
-      //   if (userInfo.uid !== "") {
-      //     if (roomType === "group") {
-      //       sortedIds = "group";
-      //     } else {
-      //       const ids = [userInfo.uid, roomUserid];
-      //       sortedIds = ids.sort()[0] + ids.sort()[1];
-      //     }
-      //     setRoomId(sortedIds);
-      //     setLoginInfo(userInfo);
-      //   } else {
-      //     console.log("");
-      //   }
-      // });
     }
   };
   const scrollToBottom = useCallback(() => {
@@ -109,7 +92,7 @@ export default function Chats() {
   useEffect(() => {
     getRoomId();
     // 대화내용 가져오기
-    ipcRenderer.send("GETMESSAGES", localStorage.getItem("roomId"));
+    ipcRenderer.send("GETMESSAGES", roomId);
     ipcRenderer.on("GETMESSAGES", async (event, payload) => {
       setOldMessages(payload);
     });

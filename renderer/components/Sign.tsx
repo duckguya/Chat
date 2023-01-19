@@ -90,7 +90,7 @@ const Sign = ({ handleSubmit, isSignIn }: IProps) => {
 
   return (
     <React.Fragment>
-      <Head children={""}>
+      <Head children={"signin"}>
         <title>sign in</title>
       </Head>
       <Container>
